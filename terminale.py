@@ -50,11 +50,12 @@ class Terminale:
         self.wnd.add(self.term)
 
         self.accel_group = Gtk.AccelGroup()
-        self._init_clipboard_handler('copy-clipboard', 'C', self._copy_clipboard)
-        self._init_clipboard_handler('paste-clipboard', 'V', self._paste_clipboard)
+        self._init_ctrl_shift_handler('C', self._copy_clipboard)
+        self._init_ctrl_shift_handler('V', self._paste_clipboard)
         self.wnd.add_accel_group(self.accel_group)
 
-    def _init_clipboard_handler(self, signal: str, key_name: str, handler: Callable):
+    def _init_ctrl_shift_handler(self, key_name: str, handler: Callable):
+        signal = 'ctrl-shift-' + key_name
         GObject.signal_new(signal, Gtk.Window,
                            GObject.SignalFlags.RUN_LAST | GObject.SignalFlags.ACTION,
                            None, ())
