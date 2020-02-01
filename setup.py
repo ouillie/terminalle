@@ -7,5 +7,5 @@ setup(name='terminalle',
       description='A fancy drop-down terminal emulateur',
       url='https://github.com/wm-noble/terminalle',
       packages=['terminalle'],
-      package_data={'terminalle': ['org.gnome.Terminalle.service']},
+      install_requires=['dbus-python', 'PyYAML'],
       python_requires='>=3.6')
