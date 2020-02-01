@@ -1,0 +1,21 @@
+shell: '/bin/sh'
+home: '~'
+font: 'Inconsolata 14'
+colors:
+  - '#000000' # black
+  - '#dc322f' # red
+  - '#859900' # green
+  - '#b58900' # yellow
+  - '#268bd2' # blue
+  - '#d33682' # magenta
+  - '#2aa198' # cyan
+  - '#eee8d5' # white
+  - '#002b36' # bright black
+  - '#cb4b16' # bright red
+  - '#586e75' # bright green
+  - '#657b83' # bright yellow
+  - '#839496' # bright blue
+  - '#6c71c4' # bright magenta
+  - '#93a1a1' # bright cyan
+  - '#fdf6e3' # bright white
+opacity: 0.75
