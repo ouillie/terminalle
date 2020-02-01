@@ -11,8 +11,9 @@ such as [tmux](https://github.com/tmux/tmux).
 $ sudo pip install .
 
 # Optional: Start the server automatically on login.
-$ mkdir -p "${HOME}/.config/autostart"
-$ cp ./terminalle.desktop "${HOME}/.config/autostart"
+$ AUTOSTART="${HOME}/.config/autostart"
+$ mkdir -p "${AUTOSTART}"
+$ cp ./terminalle.desktop "${AUTOSTART}"
 
 # Optional: Restart the server automatically if exited.
 $ DBUS_SERVICES="${XDG_DATA_DIRS:-/usr/share}/dbus-1/services"
