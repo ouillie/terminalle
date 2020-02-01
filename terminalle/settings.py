@@ -35,14 +35,15 @@ from gi.repository import Gdk, Pango
 
 def load(path:str):
     """ Return normalized settings loaded from a YAML file. """
-    with open(path) as f:
-        attrs = safe_load(f)
-    if isinstance(attrs, dict):
-        # change hyphenated-keys to underscored_keys
-        return normalize(**{key.replace('-', '_'): value
-                            for key, value in attrs.items()})
-    else:
+    try:
+        with open(path) as f:
+            attrs = safe_load(f)
+        assert isinstance(attrs, dict)
+    except:
         return normalize()
+    # change hyphenated-keys to underscored_keys
+    return normalize(**{key.replace('-', '_'): value
+                        for key, value in attrs.items()})
 
 _defaults = {
     'shell': getenv('SHELL', '/bin/sh'),
