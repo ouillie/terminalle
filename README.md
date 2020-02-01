@@ -1,10 +1,23 @@
 
-It's just a big, semi-transparent terminal window over everything.
+It's just a fullscreen terminal emulator that supports transparency.
+
+It omits many features,
+because it's meant to be used in conjunction with a terminal multiplexer
+such as [tmux](https://github.com/tmux/tmux).
 
 ### Install
 
 ```bash
 $ sudo pip install .
+
+# Optional: Start the server automatically on login.
+$ mkdir -p ~/.config/autostart
+$ cp ./terminalle.desktop ~/.config/autostart
+
+# Optional: Restart the server automatically if exited.
+$ DBUS_SERVICES="${XDG_DATA_DIRS:-/usr/share}/dbus-1/services"
+$ mkdir -p "${DBUS_SERVICES}"
+$ cp ./org.gnome.Terminalle.service "${DBUS_SERVICES}"
 ```
 
 ### Usage
