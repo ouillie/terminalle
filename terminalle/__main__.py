@@ -26,13 +26,11 @@ class Control(DBusObject):
 
 def parse_args():
     home = getenv('HOME', '~')
-    parser = ArgumentParser(description='A fançy drop-down terminal.',
+    parser = ArgumentParser(description='A fancy drop-down terminal emulateur.',
                             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('-c', '--config', metavar='PATH',
                         help='load config settings from PATH',
                         default=f'{home}/.config/terminalle.yaml')
-    parser.add_argument('-f', '--force', action='store_true',
-                        help='delete the server socket if it already exists')
     parser.add_argument('-s', '--show', action='store_true',
                         help='show the window immediately on startup')
     return parser.parse_args()
