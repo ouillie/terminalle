@@ -43,9 +43,10 @@ You'll probably want to hook up the toggle method to a keybinding.
 In gnome, you can do that with `gsettings`:
 
 ```bash
-# WARNING: This will override any existing custom keybindings.
+# WARNING: This will disable any other custom keybindings.
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys \
      custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+# WARNING: This will overwrite any existing custom keybinding called 'custom0'.
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ \
      name "Toggle Terminalle"
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ \
