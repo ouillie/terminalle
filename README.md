@@ -1,5 +1,11 @@
 
-It's just a big transparent terminal window over everything.
+It's just a big, semi-transparent terminal window over everything.
+
+### Install
+
+```bash
+$ sudo pip install .
+```
 
 ### Usage
 
@@ -18,6 +24,8 @@ $ dbus-send --session --type=method_call --dest=org.gnome.Terminalle /termctl \
 $ dbus-send --session --type=method_call --dest=org.gnome.Terminalle /termctl \
       org.gnome.Terminalle.Quit
 ```
+
+You'll probably want to hook up the toggle method to a keybinding.
 
 ### Configuration
 
