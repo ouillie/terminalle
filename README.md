@@ -5,22 +5,6 @@ It omits many features,
 because it's meant to be used in conjunction with a terminal multiplexer
 such as [tmux](https://github.com/tmux/tmux).
 
-### Install
-
-```bash
-$ sudo pip install .
-
-# Optional: Start the server automatically on login.
-$ AUTOSTART="${HOME}/.config/autostart"
-$ mkdir -p "${AUTOSTART}"
-$ cp ./terminalle.desktop "${AUTOSTART}"
-
-# Optional: Restart the server automatically if exited.
-$ DBUS_SERVICES="${XDG_DATA_DIRS:-/usr/share}/dbus-1/services"
-$ mkdir -p "${DBUS_SERVICES}"
-$ cp ./org.gnome.Terminalle.service "${DBUS_SERVICES}"
-```
-
 ### Usage
 
 ```bash
@@ -39,7 +23,36 @@ $ dbus-send --session --type=method_call --dest=org.gnome.Terminalle /termctl \
       org.gnome.Terminalle.Quit
 ```
 
+### Install
+
+```bash
+$ sudo pip install .
+
+# Optional: Start the server automatically on login.
+$ AUTOSTART="${HOME}/.config/autostart"
+$ mkdir -p "${AUTOSTART}"
+$ cp ./terminalle.desktop "${AUTOSTART}"
+
+# Optional: Restart the server automatically if exited.
+$ DBUS_SERVICES="${XDG_DATA_DIRS:-/usr/share}/dbus-1/services"
+$ mkdir -p "${DBUS_SERVICES}"
+$ cp ./org.gnome.Terminalle.service "${DBUS_SERVICES}"
+```
+
 You'll probably want to hook up the toggle method to a keybinding.
+In gnome, you can do that with `gsettings`:
+
+```bash
+# WARNING: This will override any existing custom keybindings.
+$ gsettings set org.gnome.settings-daemon.plugins.media-keys \
+     custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ \
+     name "Toggle Terminalle"
+$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ \
+     command "dbus-send --session --type=method_call --dest=org.gnome.Terminalle /termctl org.gnome.Terminalle.Toggle"
+$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ \
+     binding "<Super>Return"
+```
 
 ### Configuration
 
