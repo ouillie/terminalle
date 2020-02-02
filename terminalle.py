@@ -6,7 +6,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Vte', '2.91')
 from gi.repository import Gtk, Gdk, GLib, GObject, Vte
 
-class Terminale:
+class Terminalle:
 
     def __init__(self, settings: Dict, show: bool):
         self.settings = settings
@@ -16,7 +16,7 @@ class Terminale:
         # For some reason the top-level window opacity must not be 1
         # in order to enable any kind of child widget transparency.
         self.wnd.set_opacity(.99)
-        self.wnd.set_title('Terminale')
+        self.wnd.set_title('Terminalle')
         self.wnd.set_hide_titlebar_when_maximized(True)
         self.wnd.maximize()
         self.wnd.fullscreen()
