@@ -18,14 +18,13 @@ class Control(DBusObject):
 
     @method('org.gnome.Terminalle')
     def Toggle(self):
-        print('tog')
         self.term.toggle()
 
     @method('org.gnome.Terminalle')
     def Quit(self):
         self.term.quit()
 
-def main():
+def parse_args():
     home = getenv('HOME', '~')
     parser = ArgumentParser(description='A fançy drop-down terminal.',
                             formatter_class=ArgumentDefaultsHelpFormatter)
@@ -36,14 +35,13 @@ def main():
                         help='delete the server socket if it already exists')
     parser.add_argument('-s', '--show', action='store_true',
                         help='show the window immediately on startup')
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    glib.DBusGMainLoop(set_as_default=True)
+if __name__ == '__main__':
+    args = parse_args()
+    loop = glib.DBusGMainLoop(set_as_default=True)
     bus = SessionBus()
     name = BusName('org.gnome.Terminalle', bus)
     term = Terminalle(settings=load(args.config), show=args.show)
     ctrl = Control(term, bus)
     term.run()
-
-if __name__ == '__main__':
-    main()

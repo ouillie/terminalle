@@ -9,7 +9,6 @@ from gi.repository import Gtk, Gdk, GLib, GObject, Vte
 class Terminalle:
 
     def __init__(self, settings: Dict, show: bool):
-        self.settings = settings
         self.show_on_startup = show
 
         self.wnd = Gtk.Window()
@@ -29,17 +28,17 @@ class Terminalle:
 
         self.term = Vte.Terminal()
         self.term.connect('child-exited', self._term_exited)
-        self.term.set_font(font_desc=self.settings['font'])
+        self.term.set_font(font_desc=settings['font'])
         self.term.set_allow_bold(True)
         self.term.set_allow_hyperlink(True)
-        bg = self.settings['colors'][0].copy()
-        bg.alpha = self.settings['opacity']
-        self.term.set_colors(background=bg, palette=self.settings['colors'])
+        bg = settings['colors'][0].copy()
+        bg.alpha = settings['opacity']
+        self.term.set_colors(background=bg, palette=settings['colors'])
 
         success, pid = self.term.spawn_sync(
             pty_flags=Vte.PtyFlags.DEFAULT,
-            working_directory=self.settings['home'],
-            argv=[self.settings['shell']],
+            working_directory=settings['home'],
+            argv=[settings['shell']],
             envv=None,
             spawn_flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD)
         if not success:
@@ -55,12 +54,12 @@ class Terminalle:
         self.wnd.add_accel_group(self.accel_group)
 
     def _init_ctrl_shift_handler(self, key_name: str, handler: Callable):
-        signal = 'ctrl-shift-' + key_name
-        GObject.signal_new(signal, Gtk.Window,
+        signal_name = 'ctrl-shift-' + key_name
+        GObject.signal_new(signal_name, Gtk.Window,
                            GObject.SignalFlags.RUN_LAST | GObject.SignalFlags.ACTION,
                            None, ())
-        self.wnd.connect(signal, handler)
-        self.wnd.add_accelerator(signal, self.accel_group,
+        self.wnd.connect(signal_name, handler)
+        self.wnd.add_accelerator(signal_name, self.accel_group,
                                  Gdk.keyval_from_name(key_name),
                                  Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK,
                                  Gtk.AccelFlags.LOCKED)
