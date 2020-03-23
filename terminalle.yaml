@@ -25,4 +25,4 @@ opacity: 0.75
 #   Ctrl+% -> split-window -h
 #   Ctrl+{ -> swap-pane -U
 #   Ctrl+} -> swap-pane -D
-tmux: true
+tmux: false
