@@ -25,6 +25,9 @@
 - opacity : float | int
   * window opacity beween 0.0 and 1.0 or 0 and 100
   * default: 0.75
+- tmux : bool
+  * whether to enable recommended hardwired tmux shortcuts
+  * default: false
 """
 
 from os import getenv, getcwd
@@ -60,6 +63,7 @@ _defaults = {
         '#839496', '#6c71c4', '#93a1a1', '#fdf6e3',
     ],
     'opacity': 0.75,
+    'tmux': False,
 }
 _valid_colors_lengths = {8, 16, 232, 256}
 
@@ -68,6 +72,7 @@ def normalize(shell: str = _defaults['shell'],
               font: str = _defaults['font'],
               colors: list = _defaults['colors'],
               opacity: float = _defaults['opacity'],
+              tmux: bool = _defaults['tmux'],
               **kwargs):
     """
     Return a normalized version of the settings configuration.
@@ -88,6 +93,7 @@ def normalize(shell: str = _defaults['shell'],
         'font': _normalize_font(font),
         'colors': [_normalize_color(c) for c in colors],
         'opacity': _opacity,
+        'tmux': _normalize_bool(tmux, 'tmux'),
     }
 
 def _normalize_type(value, type, name):
@@ -129,6 +135,11 @@ def _normalize_number(number, intmax):
     elif isinstance(number, int) and 0 <= number <= intmax:
         return number / intmax
     return None
+
+def _normalize_bool(value, name):
+    if isinstance(value, bool):
+        return value
+    raise InvalidSettingsError(f'{name} ({value}) must be a boolean')
 
 class InvalidSettingsError(Exception):
     """ Indicates that the settings configuration is invalid. """

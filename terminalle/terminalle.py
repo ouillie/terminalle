@@ -1,5 +1,6 @@
 
 from typing import Dict, Callable
+from os import system
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -34,10 +35,16 @@ class Terminalle:
         term.connect('child-exited', self._term_exited)
         wnd.add(term)
 
-        # Ctrl+Shift+(C|V) to use the clipboard.
         accel_group = Gtk.AccelGroup()
-        _init_ctrl_shift_handler(wnd, accel_group, 'C', self._copy_clipboard)
-        _init_ctrl_shift_handler(wnd, accel_group, 'V', self._paste_clipboard)
+        # Ctrl+Shift+(C|V) to use the clipboard.
+        _init_ctrl_shift_handler('c', wnd, accel_group, self._copy_clipboard)
+        _init_ctrl_shift_handler('v', wnd, accel_group, self._paste_clipboard)
+        if settings['tmux']:
+            # Hardwire recommended shortcuts that are impossible to bind from `.tmux.conf`.
+            _init_ctrl_handler('quotedbl', wnd, accel_group, _tmux_cmd('split-window'))
+            _init_ctrl_handler('percent', wnd, accel_group, _tmux_cmd('split-window -h'))
+            _init_ctrl_handler('braceleft', wnd, accel_group, _tmux_cmd('swap-pane -U'))
+            _init_ctrl_handler('braceright', wnd, accel_group, _tmux_cmd('swap-pane -D'))
         wnd.add_accel_group(accel_group)
 
         self.wnd = wnd
@@ -92,16 +99,31 @@ class Terminalle:
         self.wnd.close()
         GLib.idle_add(Gtk.main_quit)
 
-def _init_ctrl_shift_handler(wnd: Gtk.Window,
-                             accel_group: Gtk.AccelGroup,
-                             key_name: str,
-                             handler: Callable):
-    signal_name = 'ctrl-shift-' + key_name
+def _init_ctrl_handler(key_name: str, *args):
+    return _init_handler('ctrl-' + key_name,
+                         Gdk.ModifierType.CONTROL_MASK,
+                         key_name, *args)
+
+def _init_ctrl_shift_handler(key_name: str, *args):
+    return _init_handler('ctrl-shift-' + key_name,
+                         Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK,
+                         key_name, *args)
+
+def _init_handler(signal_name: str,
+                  mod_mask: Gdk.ModifierType,
+                  key_name: str,
+                  wnd: Gtk.Window,
+                  accel_group: Gtk.AccelGroup,
+                  handler: Callable):
     GObject.signal_new(signal_name, Gtk.Window,
                        GObject.SignalFlags.RUN_LAST | GObject.SignalFlags.ACTION,
                        None, ())
     wnd.connect(signal_name, handler)
     wnd.add_accelerator(signal_name, accel_group,
-                        Gdk.keyval_from_name(key_name),
-                        Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK,
+                        Gdk.keyval_from_name(key_name), mod_mask,
                         Gtk.AccelFlags.LOCKED)
+
+def _tmux_cmd(cmd: str):
+    def _handler(wnd: Gtk.Window):
+        system('tmux ' + cmd)
+    return _handler
