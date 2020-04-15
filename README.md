@@ -1,5 +1,5 @@
 
-A modern, extremely minimalist fullscreen "drop-down" terminal emulator that supports transparency.
+A modern, extremely minimalist, fullscreen "drop-down" terminal emulator that supports transparency.
 Use [dbus](https://www.freedesktop.org/wiki/Software/dbus/) (installed by default in Gnome and KDE)
 to toggle window visibility or quit.
 
@@ -66,15 +66,15 @@ Defaults can be selectively overridden in `${HOME}/.config/terminalle.yaml`.
 ### TMUX Mode
 
 This is the recommended way to use Terminalle.
-Turn it on by setting `tmux: true` in `terminalle.yaml` (see [Configuration](#configuration)).
+Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration](#configuration)).
 It configures some alternative tmux keyboard shortcuts,
 which would normally be impossible to configure in `.tmux.conf`,
 eliminating the prefix in favor of a simple `Ctrl` modifier,
 thus cutting the number of keystrokes in half.
 If you're a tmux power-user, this will change things for you.
 
-For example: the default tmux shortcut to split a window horizontally is `Ctrl+b %`,
-where `Ctrl+b` is the prefix and `%` is the shortcut key,
+For example: the default tmux shortcut to split a window horizontally is `Ctrl+b %`
+-- where `Ctrl+b` is the prefix and `%` is the shortcut key --
 which must be pressed in two discreet keystokes of two keys each (since `%` is really `Shift+5`).
 In tmux mode, this would be shortened to simply `Ctrl+%` aka `Ctrl+Shift+5`,
 which is only a single keystroke of three keys.
@@ -108,7 +108,10 @@ bind-key -n M-Right resize-pane -R 5  # Alt+Right
 
 bind-key -n C-n next-window           # Ctrl+n
 bind-key -n C-p previous-window       # Ctrl+p
-# Note that `new-window` is not shortened because `Ctrl+c` is `SIGINT`.
+# Note that `new-window` is not shortened because `Ctrl+c` sends `SIGINT`.
 
 bind-key -n C-Space next-layout       # Ctrl+Space
 ```
+
+This all goes especially well with something like
+[vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator).
