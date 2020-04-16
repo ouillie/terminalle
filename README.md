@@ -46,7 +46,7 @@ $ cp ./org.gnome.Terminalle.service "${DBUS_SERVICES}"
 ```
 
 You'll probably want to hook up the toggle method to a keybinding.
-In gnome, you can do that with `gsettings`:
+In Gnome, you can do that with `gsettings`:
 
 ```bash
 # WARNING: Running this verbatim will disable any other custom keybindings.
@@ -72,15 +72,6 @@ which would normally be impossible to configure in `.tmux.conf`,
 eliminating the prefix in favor of a simple `Ctrl` modifier,
 thus cutting the number of keystrokes in half.
 If you're a tmux power-user, this will change things for you.
-
-For example: the default tmux shortcut to split a window horizontally is `Ctrl+b %`
--- where `Ctrl+b` is the prefix and `%` is the shortcut key --
-which must be pressed in two discreet keystokes of two keys each (since `%` is really `Shift+5`).
-In tmux mode, this would be shortened to simply `Ctrl+%` aka `Ctrl+Shift+5`,
-which is only a single keystroke of three keys.
-In most terminal emulators (including VTE), it would be impossible to receive the `Ctrl+%` signal.
-
-tmux mode provides the following shortcuts:
 
 | Command         | tmux default | tmux mode |
 | :-------------- | -----------: | --------: |
