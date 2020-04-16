@@ -82,7 +82,7 @@ If you're a tmux power-user, this will change things for you.
 | copy-mode       | `<Prefix> [` |  `Ctrl+[` |
 
 To reap maximum benefits, add the following to your `.tmux.conf`,
-to take care of the other tmux shortcuts that do not get mangled by typical terminal emulators:
+to take care of other common tmux shortcuts that do not get mangled by typical terminal emulators:
 
 ```bash
 # Generally shorten `<Prefix> X` to `Ctrl+X` for various `X`.
