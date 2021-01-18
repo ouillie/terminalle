@@ -1,11 +1,14 @@
+# TERMINALLE
 
 A modern, extremely minimalist, semi-transparent fullscreen "drop-down" terminal emulator.
 Use [dbus](https://www.freedesktop.org/wiki/Software/dbus/) (installed by default in Gnome and KDE)
 to toggle window visibility or quit.
 
-Based on [VTE](https://github.com/GNOME/vte), the business logic of this python package
-is contained entirely within [a concise ~150-line file](terminalle/terminalle.py) --
-which mostly just configures keyboard shortcuts -- making it easy to modify for alternative uses.
+Based on [VTE](https://wiki.gnome.org/Apps/Terminal/VTE),
+the business logic of this python package is contained entirely within
+[a concise ~150-line file](terminalle/terminalle.py)
+-- which mostly just configures keyboard shortcuts --
+making it easy to modify for alternative uses.
 
 It omits many features common in other terminal emulators, such as tabs,
 because it's meant to be used in conjunction with a terminal multiplexer
@@ -77,7 +80,7 @@ It configures some alternative tmux keyboard shortcuts,
 which would normally be impossible to configure in `.tmux.conf`,
 generally eliminating the prefix in favor of a simple `Ctrl` modifier,
 thus cutting the number of keystrokes in half
-without requiring you to memorize entirely new shortcuts.
+without requiring you to memorize new shortcuts.
 If you're a tmux power-user, this will **change** things for you.
 
 The following shortcuts are enabled in tmux mode:
