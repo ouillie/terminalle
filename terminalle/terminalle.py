@@ -5,7 +5,7 @@ from os import system
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Vte', '2.91')
-from gi.repository import Gtk, Gdk, GLib, GObject, Vte
+from gi.repository import Gtk, Gdk, GLib, Gio, GObject, Vte
 
 class Terminalle:
     """ Manages the window. """
@@ -55,19 +55,34 @@ class Terminalle:
 
     def run(self):
         """ Open the TTY and enter the GTK main loop. """
-        success, vte_pid = self.term.spawn_sync(
-            pty_flags=Vte.PtyFlags.DEFAULT,
-            working_directory=self.settings['home'],
-            argv=[self.settings['shell']],
-            envv=None,
-            spawn_flags=GLib.SpawnFlags.DO_NOT_REAP_CHILD)
-        if not success:
+        term_spawn_canceller = Gio.Cancellable.new()
+        self.term.spawn_async(
+            Vte.PtyFlags.DEFAULT,
+            self.settings['home'],            # Initial working directory.
+            [self.settings['shell']],         # argv
+            None,                             # Initial environment variables.
+            GLib.SpawnFlags.DEFAULT,
+            None,                             # Callback for child setup.
+            None,                             # User data passed to callback.
+            -1,                               # Use the default timeout.
+            term_spawn_canceller,             # In case we need to cancel the spawn.
+            self._term_spawn_async_callback,  # Callback after spawn complete.
+            None)                             # User data passed to callback.
+        try:
+            Gtk.main()
+        finally:
+            term_spawn_canceller.cancel()
+
+    def _term_spawn_async_callback(self, terminal, pid, error, user_data):
+        if error is not None:
             self.wnd.close()
-            raise RuntimeError('Error spawning VTE terminal.')
-        self.wnd.show_all()
-        if not self.show_on_startup:
-            self.wnd.hide()
-        Gtk.main()
+            Gtk.main_quit()
+            raise RuntimeError(f'Error spawning VTE [{error.domain}:{error.code}]: {error.message}')
+        if self.show_on_startup:
+            self.wnd.show_all()
+        else:
+            # Only show the child widgets, waiting for the toggle signal to show the window.
+            self.term.show_all()
 
     def toggle(self):
         """ Toggle window visibility. """

@@ -1,12 +1,11 @@
 
-A modern, extremely minimalist, fullscreen "drop-down" terminal emulator that supports transparency.
+A modern, extremely minimalist, semi-transparent fullscreen "drop-down" terminal emulator.
 Use [dbus](https://www.freedesktop.org/wiki/Software/dbus/) (installed by default in Gnome and KDE)
 to toggle window visibility or quit.
 
 Based on [VTE](https://github.com/GNOME/vte), the business logic of this python package
-is contained entirely within [a concise ~130-line file](terminalle/terminalle.py),
-which mostly just configures keyboard shortcuts, making it easy to adapt to alternative uses.
-See also [configuration](#configuration).
+is contained entirely within [a concise ~150-line file](terminalle/terminalle.py) --
+which mostly just configures keyboard shortcuts -- making it easy to modify for alternative uses.
 
 It omits many features common in other terminal emulators, such as tabs,
 because it's meant to be used in conjunction with a terminal multiplexer
@@ -17,10 +16,11 @@ See also [tmux mode](#tmux-mode) for enhanced tmux features.
 
 ```bash
 # See usage info.
-$ python -m terminalle --help
+$ terminalle --help
 
 # Start the server. The window is initially hidden by default.
-$ python -m terminalle &
+# Note that this is unnecessary if `org.gnome.Terminalle.service` is installed.
+$ terminalle &
 
 # Toggle window visibility.
 $ dbus-send --session --type=method_call --dest=org.gnome.Terminalle /termctl org.gnome.Terminalle.Toggle
@@ -29,12 +29,16 @@ $ dbus-send --session --type=method_call --dest=org.gnome.Terminalle /termctl or
 $ dbus-send --session --type=method_call --dest=org.gnome.Terminalle /termctl org.gnome.Terminalle.Quit
 ```
 
+Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
+
 ### Install
 
 ```bash
 $ sudo pip install .
 
 # Optional: Start the server automatically on login.
+#           While not strictly necessary if `org.gnome.Terminalle.service` is installed,
+#           this reduces opening time on first toggle.
 $ AUTOSTART="${HOME}/.config/autostart"
 $ mkdir -p "${AUTOSTART}"
 $ cp ./terminalle.desktop "${AUTOSTART}"
@@ -45,12 +49,14 @@ $ mkdir -p "${DBUS_SERVICES}"
 $ cp ./org.gnome.Terminalle.service "${DBUS_SERVICES}"
 ```
 
-You'll probably want to hook up the toggle method to a keybinding.
+You'll probably want to hook up the toggle method to a keybinding for easy access.
 In Gnome, you can do that with `gsettings`:
 
 ```bash
 # WARNING: Running this verbatim will disable any other custom keybindings.
+#          It is merely provided as an example.
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+
 # WARNING: This will overwrite any existing custom keybinding called 'custom0'.
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Toggle Terminalle"
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "dbus-send --session --type=method_call --dest=org.gnome.Terminalle /termctl org.gnome.Terminalle.Toggle"
@@ -63,23 +69,26 @@ See an [example configuration](terminalle.yaml).
 See the defaults in [`settings.py`](terminalle/settings.py).
 Defaults can be selectively overridden in `${HOME}/.config/terminalle.yaml`.
 
-### TMUX Mode
+### TMUX MODE
 
 This is the recommended way to use Terminalle.
 Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration](#configuration)).
 It configures some alternative tmux keyboard shortcuts,
 which would normally be impossible to configure in `.tmux.conf`,
-eliminating the prefix in favor of a simple `Ctrl` modifier,
-thus cutting the number of keystrokes in half.
-If you're a tmux power-user, this will change things for you.
+generally eliminating the prefix in favor of a simple `Ctrl` modifier,
+thus cutting the number of keystrokes in half
+without requiring you to memorize entirely new shortcuts.
+If you're a tmux power-user, this will **change** things for you.
 
-| Command         | tmux default | tmux mode |
-| :-------------- | -----------: | --------: |
-| split-window    | `<Prefix> "` |  `Ctrl+"` |
-| split-window -h | `<Prefix> %` |  `Ctrl+%` |
-| swap-pane -U    | `<Prefix> {` |  `Ctrl+{` |
-| swap-pane -D    | `<Prefix> }` |  `Ctrl+}` |
-| copy-mode       | `<Prefix> [` |  `Ctrl+[` |
+The following shortcuts are enabled in tmux mode:
+
+| Command           | tmux default | tmux mode |
+| :---------------- | -----------: | --------: |
+| `split-window`    | `<Prefix> "` |  `Ctrl+"` |
+| `split-window -h` | `<Prefix> %` |  `Ctrl+%` |
+| `swap-pane -U`    | `<Prefix> {` |  `Ctrl+{` |
+| `swap-pane -D`    | `<Prefix> }` |  `Ctrl+}` |
+| `copy-mode`       | `<Prefix> [` |  `Ctrl+[` |
 
 To reap maximum benefits, add the following to your `.tmux.conf`,
 to take care of other common tmux shortcuts that do not get mangled by typical terminal emulators:

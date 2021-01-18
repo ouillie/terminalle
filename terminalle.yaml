@@ -20,7 +20,7 @@ colors:
   - '#93a1a1' # bright cyan
   - '#fdf6e3' # bright white
 opacity: 0.75
-# If enabled, `tmux` hardwires the following tmux shortcuts,
+# If enabled, the `tmux` option hardwires the following tmux shortcuts
 # since it is impossible to bind them from `.tmux.conf`:
 #   Ctrl+" -> split-window
 #   Ctrl+% -> split-window -h

@@ -3,4 +3,4 @@ Name=Terminalle
 Comment=A fancy drop-down terminal emulateur.
 Type=Application
 Terminal=false
-Exec=/usr/bin/python -m terminalle
+Exec=/usr/bin/env terminalle
