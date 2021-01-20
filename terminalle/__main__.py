@@ -30,6 +30,7 @@ class Controller(DBusObject):
 def build_parser():
     parser = ArgumentParser(description='A fancy drop-down terminal emulateur.',
                             formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-v', '--version', action='version', version='1.0')
     parser.add_argument('-c', '--config', metavar='PATH',
                         help='load config settings from PATH',
                         default=join_path(_home_path, '.config', 'terminalle.yaml'))

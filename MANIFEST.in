@@ -1,1 +1,1 @@
-include terminalle.desktop org.gnome.Terminalle.service
+include terminalle/terminalle.desktop terminalle/org.gnome.Terminalle.service terminalle.1
