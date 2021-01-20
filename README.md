@@ -39,7 +39,7 @@ Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 ```bash
 $ sudo pip install terminalle
 
-# Optional: Start the server automatically on login and restart automatically if exited.
+# Optional: start the server automatically on login and restart automatically if exited.
 $ terminalle auto
 ```
 
