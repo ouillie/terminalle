@@ -22,7 +22,7 @@ See also [tmux mode](#tmux-mode) for enhanced tmux features.
 $ terminalle --help
 
 # Start the server. The window is initially hidden by default.
-# Note that this is unnecessary if `org.gnome.Terminalle.service` is installed.
+# Note that this is unnecessary you run `terminalle auto`.
 $ terminalle &
 
 # Toggle window visibility.
@@ -39,8 +39,7 @@ Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 ```bash
 $ sudo pip install terminalle
 
-# Optional: Start the server automatically on login
-#           and restart the server automatically if exited.
+# Optional: Start the server automatically on login and restart automatically if exited.
 $ terminalle auto
 ```
 
