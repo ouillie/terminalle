@@ -37,19 +37,11 @@ Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 ### Install
 
 ```bash
-$ sudo pip install .
+$ sudo pip install terminalle
 
-# Optional: Start the server automatically on login.
-#           While not strictly necessary if `org.gnome.Terminalle.service` is installed,
-#           this reduces opening time on first toggle.
-$ AUTOSTART="${HOME}/.config/autostart"
-$ mkdir -p "${AUTOSTART}"
-$ cp ./terminalle.desktop "${AUTOSTART}"
-
-# Optional: Restart the server automatically if exited.
-$ DBUS_SERVICES="${XDG_DATA_DIRS:-/usr/share}/dbus-1/services"
-$ mkdir -p "${DBUS_SERVICES}"
-$ cp ./org.gnome.Terminalle.service "${DBUS_SERVICES}"
+# Optional: Start the server automatically on login
+#           and restart the server automatically if exited.
+$ terminalle auto
 ```
 
 You'll probably want to hook up the toggle method to a keybinding for easy access.
