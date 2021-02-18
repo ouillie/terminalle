@@ -46,6 +46,7 @@ class Terminalle:
             _init_ctrl_handler('braceleft', wnd, accel_group, _tmux_cmd('swap-pane -U'))
             _init_ctrl_handler('braceright', wnd, accel_group, _tmux_cmd('swap-pane -D'))
             _init_ctrl_handler('bracketleft', wnd, accel_group, _tmux_cmd('copy-mode'))
+            _init_ctrl_handler('bracketright', wnd, accel_group, _tmux_cmd('paste-buffer'))
         wnd.add_accel_group(accel_group)
 
         self.wnd = wnd

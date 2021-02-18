@@ -83,6 +83,7 @@ The following shortcuts are enabled in tmux mode:
 | `swap-pane -U`    | `<Prefix> {` |  `Ctrl+{` |
 | `swap-pane -D`    | `<Prefix> }` |  `Ctrl+}` |
 | `copy-mode`       | `<Prefix> [` |  `Ctrl+[` |
+| `paste-buffer`    | `<Prefix> ]` |  `Ctrl+]` |
 
 To reap maximum benefits, add the following to your `.tmux.conf`,
 to take care of other common tmux shortcuts that do not get mangled by typical terminal emulators:
