@@ -1,0 +1,37 @@
+name: sync-readme-to-gist
+
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "sync"
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Run a script using the runners shell
+      - name: Sync README to Gist
+        env:
+          TITLE: Terminalle - README.md
+          FILENAME: README.md
+          FILETYPE: text/markdown
+          GIST_ID: d0383f478ebec7db646b0746d5d25a33
+        run: |
+          DESCRIPTION=$(sed 's/\"/\\"/g' <<< "${GITHUB_REPOSITORY}/${FILENAME}")
+          CONTENT=$(sed -e 's/\\/\\\\/g' -e 's/\t/\\t/g' -e 's/\"/\\"/g' -e 's/\r//g' "${GITHUB_WORKSPACE}/${FILENAME}" | sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g')
+          curl --silent --fail --show-error \
+              --request PATCH \
+              --header "Content-Type: application/json" \
+              --header "Accept: application/vnd.github.v3+json" \
+              --header "Authorization: token ${{ secrets.GIST_AUTH_TOKEN }}" \
+              --data-raw "{\"description\": \"${DESCRIPTION}\", \"files\": {\"${TITLE}\": {\"filename\": \"${TITLE}\", \"type\": \"${FILETYPE}\", \"content\": \"${CONTENT}\"}}}" \
+              "https://api.github.com/gists/${GIST_ID}"
