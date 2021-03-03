@@ -5,7 +5,7 @@ Use [dbus](https://www.freedesktop.org/wiki/Software/dbus/) (installed by defaul
 to toggle window visibility or quit.
 
 Based on [VTE](https://wiki.gnome.org/Apps/Terminal/VTE),
-the business logic of this python package is contained entirely within
+the business logic of this Python package is contained entirely within
 [a concise ~150-line file](terminalle/terminalle.py)
 -- which mostly just configures keyboard shortcuts --
 making it easy to modify for alternative uses.
@@ -22,7 +22,7 @@ See also [tmux mode](#tmux-mode) for enhanced tmux features.
 $ terminalle --help
 
 # Start the server. The window is initially hidden by default.
-# Note that this is unnecessary you run `terminalle auto`.
+# This is unnecessary if you run `terminalle auto`.
 $ terminalle &
 
 # Toggle window visibility.
@@ -86,7 +86,7 @@ The following shortcuts are enabled in tmux mode:
 | `paste-buffer`    | `<Prefix> ]` |  `Ctrl+]` |
 
 To reap maximum benefits, add the following to your `.tmux.conf`,
-to take care of other common tmux shortcuts that do not get mangled by typical terminal emulators:
+taking care of other common tmux shortcuts that do not get mangled by typical terminal emulators:
 
 ```bash
 # Generally shorten `Ctrl+b <X>` to `Ctrl+<X>` for various `<X>`.
