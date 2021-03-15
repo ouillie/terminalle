@@ -1,3 +1,4 @@
+# Automatically synchronize the README to a gist so it can be embedded in external web pages.
 name: sync-readme-to-gist
 
 on:

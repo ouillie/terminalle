@@ -1,7 +1,7 @@
 # TERMINALLE
 
 A modern, extremely minimalist, semi-transparent fullscreen "drop-down" terminal emulator.
-Use [dbus](https://www.freedesktop.org/wiki/Software/dbus/) (installed by default in Gnome and KDE)
+Use [dbus](https://www.freedesktop.org/wiki/Software/dbus/) (installed by default in GNOME and KDE)
 to toggle window visibility or quit.
 
 Based on [VTE](https://wiki.gnome.org/Apps/Terminal/VTE),
@@ -22,7 +22,7 @@ See also [tmux mode](#tmux-mode) for enhanced tmux features.
 $ terminalle --help
 
 # Start the server. The window is initially hidden by default.
-# This is unnecessary if you run `terminalle auto`.
+# This is unnecessary if you've enabled auto-start with `terminalle auto`.
 $ terminalle &
 
 # Toggle window visibility.
@@ -41,10 +41,14 @@ $ sudo pip install terminalle
 
 # Optional: start the server automatically on login and restart automatically if exited.
 $ terminalle auto
+
+# Optional: disable auto-start (this should be done prior to uninstalling).
+$ terminalle no-auto
 ```
 
 You'll probably want to hook up the toggle method to a keybinding for easy access.
-In Gnome, you can do that with `gsettings`:
+In GNOME, you can either do that in the GNOME Control Center GUI (a.k.a "Settings"),
+or with `gsettings`:
 
 ```bash
 # WARNING: Running this verbatim will disable any other custom keybindings.
@@ -68,9 +72,10 @@ Defaults can be selectively overridden in `${HOME}/.config/terminalle.yaml`.
 This is the recommended way to use Terminalle.
 Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration](#configuration)).
 It configures some alternative tmux keyboard shortcuts,
-which would normally be impossible to configure in `.tmux.conf`,
-generally eliminating the prefix in favor of a simple `Ctrl` modifier,
-thus cutting the number of keystrokes in half
+which would normally be impossible to configure in `.tmux.conf`
+since terminal emulators typically cannot handle these key combinations.
+Generally replacing the tmux prefix with a simple `Ctrl` modifier,
+it cuts the number of keystrokes in half
 without requiring you to memorize new shortcuts.
 If you're a tmux power-user, this will **change** things for you.
 
