@@ -57,7 +57,7 @@ def build_parser():
         target_group.add_argument('-s', '--system', action='store_true',
                                   help='apply to all users on the system', default=False)
         sub_parser.add_argument('-f', '--force', action='store_true',
-                                help='delete files even if the contents are unexpected')
+                                help='modify files even if existing contents are unexpected')
     auto_parser.add_argument('--no-start-on-login', action='store_true',
                              help='do *not* install XDG desktop file')
     auto_parser.add_argument('--no-restart-if-closed', action='store_true',
