@@ -8,7 +8,7 @@
   * default: current working directory of caller
 - font : str | Pango.FontDescription
   * must be valid input for Pango.font_description_from_string()
-  * default: 'Inconsolata 16'
+  * default: 'Source Code Pro 13'
 - colors : [str | [int | float] | Gdk.RGBA]
   * must have length either 8, 16, 232, or 256:
     > first 8 are the main colors
@@ -51,7 +51,7 @@ def load(path:str):
 _defaults = {
     'shell': getenv('SHELL', '/bin/sh'),
     'home': getcwd(),
-    'font': 'Inconsolata 14',
+    'font': 'Source Code Pro 13',
     # just solarized-dark with deeper black
     'colors': [
         # black red green yellow

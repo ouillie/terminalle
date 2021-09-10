@@ -1,7 +1,7 @@
 # This is just an example configuation. Values are not necessarily the default.
 shell: '/bin/sh'
 home: '/home/user'
-font: 'Inconsolata 14'
+font: 'Source Code Pro 13'
 colors:
   - '#000000' # black
   - '#dc322f' # red
