@@ -9,9 +9,7 @@ from dbus.service import Object as DBusObject, BusName, method
 from dbus.mainloop.glib import DBusGMainLoop
 
 from . import Terminalle, load_settings, service_name
-from .auto import auto, no_auto
-
-_home_path = getenv('HOME', '~')
+from .auto import auto, no_auto, xdg_config_home_path
 
 class Controller(DBusObject):
 
@@ -28,12 +26,12 @@ class Controller(DBusObject):
         self.term.quit()
 
 def build_parser():
-    parser = ArgumentParser(description='A fancy drop-down terminal emulateur.',
+    parser = ArgumentParser(description='A fancy "drop-down" terminal emulateur.',
                             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('-v', '--version', action='version', version='1.0')
     parser.add_argument('-c', '--config', metavar='PATH',
                         help='load config settings from PATH',
-                        default=join_path(_home_path, '.config', 'terminalle.yaml'))
+                        default=join_path(xdg_config_home_path, 'terminalle.yaml'))
     parser.add_argument('-s', '--show', action='store_true',
                         help='show the window immediately on startup')
     subparsers = parser.add_subparsers(title='subcommands', dest='subcommand',
@@ -75,10 +73,10 @@ def main():
         ctrl = Controller(term, bus)
         term.run()
     elif args.subcommand == 'auto':
-        auto(_home_path, args.system, args.force,
+        auto(args.system, args.force,
              not args.no_start_on_login, not args.no_restart_if_closed)
     elif args.subcommand == 'no-auto':
-        no_auto(_home_path, args.system, args.force)
+        no_auto(args.system, args.force)
     else:
         raise ValueError(f'Unexpected subcommand \'{args.subcommand}\'.')
 

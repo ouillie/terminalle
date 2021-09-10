@@ -1,19 +1,16 @@
 # TERMINALLE
 
-A modern, extremely minimalist, semi-transparent fullscreen "drop-down" terminal emulator.
-Use [dbus](https://www.freedesktop.org/wiki/Software/dbus/) (installed by default in GNOME and KDE)
-to toggle window visibility or quit.
+A modern, extremely minimalist, semi-transparent fullscreen "drop-down" terminal emulateur.
+Use [dbus][1] (installed by default in GNOME and KDE) to toggle window visibility or quit.
 
-Based on [VTE](https://wiki.gnome.org/Apps/Terminal/VTE),
-the business logic of this Python package is contained entirely within
-[a concise ~150-line file](terminalle/terminalle.py)
--- which mostly just configures keyboard shortcuts --
+Based on [VTE][2], the business logic of this Python package is contained entirely within
+[a concise ~150-line file][3] &mdash; which mostly just configures keyboard shortcuts &mdash;
 making it easy to modify for alternative uses.
 
 It omits many features common in other terminal emulators, such as tabs,
 because it's meant to be used in conjunction with a terminal multiplexer
-such as [tmux](https://github.com/tmux/tmux), which offers a stable, powerful, and mature UI.
-See also [tmux mode](#tmux-mode) for enhanced tmux features.
+such as [tmux][4], which offers a stable, powerful, and mature UI.
+See also [tmux mode][5] for enhanced tmux features.
 
 ### Usage
 
@@ -42,7 +39,7 @@ $ sudo pip install terminalle
 # Optional: start the server automatically on login and restart automatically if exited.
 $ terminalle auto
 
-# Optional: disable auto-start (this should be done prior to uninstalling).
+# Optional: disable auto-start (if enabled, this should be done prior to uninstalling).
 $ terminalle no-auto
 ```
 
@@ -63,14 +60,14 @@ $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/
 
 ### Configuration
 
-See an [example configuration](terminalle.yaml).
-See the defaults in [`settings.py`](terminalle/settings.py).
-Defaults can be selectively overridden in `${HOME}/.config/terminalle.yaml`.
+See an [example configuration][6]. See the defaults in [`settings.py`][7].
+Defaults can be selectively overridden in `${XDG_CONFIG_HOME}/terminalle.yaml`.
+Typically, this is `${HOME}/.config/terminalle.yaml`.
 
 ### TMUX MODE
 
 This is the recommended way to use Terminalle.
-Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration](#configuration)).
+Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][8]).
 It configures some alternative tmux keyboard shortcuts,
 which would normally be impossible to configure in `.tmux.conf`
 since terminal emulators typically cannot handle these key combinations.
@@ -113,5 +110,14 @@ bind -n C-p previous-window            # Ctrl+p
 bind -n C-Space next-layout            # Ctrl+Space
 ```
 
-This all goes especially well with something like
-[vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator).
+This all goes especially well with something like [vim-tmux-navigator][9].
+
+[1]: https://www.freedesktop.org/wiki/Software/dbus/
+[2]: https://wiki.gnome.org/Apps/Terminal/VTE
+[3]: terminalle/terminalle.py
+[4]: https://tmux.github.io/
+[5]: #tmux-mode
+[6]: terminalle.yaml
+[7]: terminalle/settings.py
+[8]: #configuration
+[9]: https://github.com/christoomey/vim-tmux-navigator

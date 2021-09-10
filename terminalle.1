@@ -1,92 +1,84 @@
-.TH terminalle "1" Manual
+.TH terminalle 1 "2021-04-11" "v0.1"
+
 .SH NAME
 Terminalle
+
 .SH SYNOPSIS
 .B terminalle
-[-h] [-c PATH] [-s] [{auto,no-auto} ...]
+[-h|-v] [-c PATH] [-s]
+.PD 0
+.LP
+.B terminalle
+COMMAND [COMMAND-OPTION ...]
+.PD
+
 .SH DESCRIPTION
-A fancy drop\-down terminal emulateur.
+A fancy "drop\-down" terminal emulateur.
+
 .SH OPTIONS
-
 .TP
-\fB\-c\fR PATH, \fB\-\-config\fR PATH
+\fB\-c\fR PATH, \fB\-\-config=\fRPATH
 load config settings from PATH
-
 .TP
 \fB\-s\fR, \fB\-\-show\fR
 show the window immediately on startup
-
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 print help message and exit
-
 .TP
 \fB\-v\fR, \fB\-\-version\fR
 print program's version number and exit
 
-.SS
-\fBSub-commands\fR
+.SH COMMANDS
 .TP
-\fBterminalle\fR \fI\,auto\/\fR
-configure auto-start and/or auto-restart
-.TP
-\fBterminalle\fR \fI\,no-auto\/\fR
-remove auto-(re)start functionality
-.SH OPTIONS 'terminalle auto'
-usage: terminalle auto [-h] [-u | -s] [-f] [--no-start-on-login] [--no-restart-if-closed]
+\fBterminalle\fR \fI\,auto\/\fR [-h] [-u|-s] [-f] [--no-start-on-login] [--no-restart-if-closed]
 
 Install an XDG desktop file to auto\-start Terminalle (in hidden mode) on login, as well as a DBUS service file to auto\-restart Terminalle if it's not already running when the user attempts to toggle it.
+.TP
+\fBterminalle\fR \fI\,no-auto\/\fR [-h] [-u|-s] [-f]
 
+Remove the DBUS service file and XDG desktop file that were installed using the \fIauto\fR subcommand.
 
+.SH COMMAND OPTIONS 'auto'
 .TP
 \fB\-u\fR, \fB\-\-user\fR
-apply to the current user only
-
+apply to the current user only - this is the default
 .TP
 \fB\-s\fR, \fB\-\-system\fR
 apply to all users on the system
-
 .TP
 \fB\-f\fR, \fB\-\-force\fR
 delete files even if the contents are unexpected
-
 .TP
 \fB\-\-no\-start\-on\-login\fR
-do *not* install XDG desktop file
-
+do \fBnot\fR install XDG desktop file
 .TP
 \fB\-\-no\-restart\-if\-closed\fR
-do *not* install DBUS service file
-
+do \fBnot\fR install DBUS service file
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 print help message and exit
 
-.SH OPTIONS 'terminalle no-auto'
-usage: terminalle no-auto [-h] [-u | -s] [-f]
-
-Remove the DBUS service file and XDG desktop file that were installed using the `auto` subcommand.
-
-
+.SH COMMAND OPTIONS 'no-auto'
 .TP
 \fB\-u\fR, \fB\-\-user\fR
-apply to the current user only
-
+apply to the current user only - this is the default
 .TP
 \fB\-s\fR, \fB\-\-system\fR
 apply to all users on the system
-
 .TP
 \fB\-f\fR, \fB\-\-force\fR
 delete files even if the contents are unexpected
-
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 print help message and exit
 
 .SH AUTHORS
-Will Noble <author@will.party>.
+Will Noble
+.MT author@will.party
+.ME .
+
 .SH DISTRIBUTION
 The latest version of terminalle can be found at
 .UR https://github.com/wm\-noble/terminalle
-.UE
+.UE .
