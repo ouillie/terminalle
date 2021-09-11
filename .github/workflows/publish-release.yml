@@ -1,5 +1,5 @@
 # Publish releases to PyPI automatically.
-name: publish-release
+name: Publish Release
 
 on:
   release:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
+  pypi:
     runs-on: ubuntu-latest
     steps:
       # Checkout the repo under ${GITHUB_WORKSPACE}, so the job can access it.

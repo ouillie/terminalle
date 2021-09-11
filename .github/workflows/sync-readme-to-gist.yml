@@ -1,5 +1,5 @@
 # Automatically synchronize the README to a gist so it can be embedded in external web pages.
-name: sync-readme-to-gist
+name: Sync README Gist
 
 on:
   push:
