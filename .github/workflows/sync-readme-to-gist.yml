@@ -2,7 +2,6 @@
 name: sync-readme-to-gist
 
 on:
-  # Trigger the workflow on push or pull-request events only for the main branch.
   push:
     branches: [ main ]
   pull_request:
@@ -12,11 +11,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  # This workflow contains a single job called "sync".
   sync:
     runs-on: ubuntu-latest
     steps:
-      # Checkout your repository under ${GITHUB_WORKSPACE}, so your job can access it.
+      # Checkout the repo under ${GITHUB_WORKSPACE}, so the job can access it.
       - uses: actions/checkout@v2
 
       # Run a script using the runners shell.
