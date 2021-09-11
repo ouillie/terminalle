@@ -16,6 +16,15 @@ jobs:
       # Checkout the repo under ${GITHUB_WORKSPACE}, so the job can access it.
       - uses: actions/checkout@v2
 
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Build the package
+        run: |
+          python -m pip install build
+          python -m build
+
       # Use some off-the-shelf thing.
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
