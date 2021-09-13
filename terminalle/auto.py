@@ -33,8 +33,8 @@ def _get_dests_and_srcs(system: bool):
              for data_dir in xdg_data_dirs],
             resource_filename(__name__, service_filename))
 
-def auto(home_path: str, system: bool, force: bool, start_on_login: bool, restart_if_closed: bool):
-    desktop_dests, desktop_src, service_dests, service_src =  _get_dests_and_srcs(home_path, system)
+def auto(system: bool, force: bool, start_on_login: bool, restart_if_closed: bool):
+    desktop_dests, desktop_src, service_dests, service_src =  _get_dests_and_srcs(system)
     # Pick the least-precendence item in the destination lists.
     # This tends to be the system-wide rather than 'local' destination.
     for enable, src, dest in [(start_on_login, desktop_src, desktop_dests[-1]),
@@ -66,8 +66,8 @@ def auto(home_path: str, system: bool, force: bool, start_on_login: bool, restar
             print(f'Created symlink: {dest}\n'
                   f'              -> {src}', file=stderr)
 
-def no_auto(home_path: str, system: bool, force: bool):
-    desktop_dests, desktop_src, service_dests, service_src =  _get_dests_and_srcs(home_path, system)
+def no_auto(system: bool, force: bool):
+    desktop_dests, desktop_src, service_dests, service_src =  _get_dests_and_srcs(system)
     for src, dests in [(desktop_src, desktop_dests), (service_src, service_dests)]:
         for dest in dests:
             if isfile(dest):

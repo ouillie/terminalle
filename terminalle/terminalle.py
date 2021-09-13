@@ -1,6 +1,6 @@
 
-from typing import Dict, Callable
 from os import system
+from typing import Dict, Callable
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -18,7 +18,6 @@ class Terminalle:
         wnd.set_keep_above(True)
         wnd.set_skip_taskbar_hint(True)
         wnd.set_skip_pager_hint(True)
-        wnd.set_type_hint(Gdk.WindowTypeHint.DOCK)
         # For some reason the top-level window opacity must not be 1
         # in order to enable any kind of child widget transparency.
         wnd.set_opacity(.99)
@@ -41,12 +40,13 @@ class Terminalle:
         _init_ctrl_shift_handler('v', wnd, accel_group, self._paste_clipboard)
         if settings['tmux']:
             # Hardwire recommended shortcuts that are impossible to bind from `.tmux.conf`.
-            _init_ctrl_handler('quotedbl', wnd, accel_group, _tmux_cmd('split-window'))
-            _init_ctrl_handler('percent', wnd, accel_group, _tmux_cmd('split-window -h'))
-            _init_ctrl_handler('braceleft', wnd, accel_group, _tmux_cmd('swap-pane -U'))
-            _init_ctrl_handler('braceright', wnd, accel_group, _tmux_cmd('swap-pane -D'))
-            _init_ctrl_handler('bracketleft', wnd, accel_group, _tmux_cmd('copy-mode'))
-            _init_ctrl_handler('bracketright', wnd, accel_group, _tmux_cmd('paste-buffer'))
+            for key_name, cmd in [('quotedbl', 'split-window'),
+                                  ('percent', 'split-window -h'),
+                                  ('braceleft', 'swap-pane -U'),
+                                  ('braceright', 'swap-pane -D'),
+                                  ('bracketleft', 'copy-mode'),
+                                  ('bracketright', 'paste-buffer')]:
+                _init_ctrl_handler(key_name, wnd, accel_group, _tmux_cmd(cmd))
         wnd.add_accel_group(accel_group)
 
         self.wnd = wnd
@@ -142,5 +142,5 @@ def _init_handler(signal_name: str,
 
 def _tmux_cmd(cmd: str):
     def _handler(wnd: Gtk.Window):
-        system('tmux ' + cmd)
+        system(f'tmux {cmd}')
     return _handler
