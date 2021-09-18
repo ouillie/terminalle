@@ -6,7 +6,7 @@ from sys import stderr
 
 from pkg_resources import resource_filename
 
-from . import service_name
+from .terminalle import SERVICE_NAME
 
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html (for reference)
 # https://specifications.freedesktop.org/autostart-spec/autostart-spec-latest.html (auto-start)
@@ -18,7 +18,7 @@ xdg_config_dirs_paths = getenv('XDG_CONFIG_DIRS', abspath(join_path(path_sep, 'e
 xdg_data_dirs_paths = getenv('XDG_DATA_DIRS', abspath(join_path(path_sep, 'usr', 'share')))
 
 def _get_dests_and_srcs(system: bool):
-    service_filename = '.'.join([service_name, 'service'])
+    service_filename = '.'.join([SERVICE_NAME, 'service'])
     desktop_filename = 'terminalle.desktop'
     if system:
         xdg_config_dirs = xdg_config_dirs_paths.split(':')

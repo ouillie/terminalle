@@ -43,10 +43,10 @@ def load(path:str):
             attrs = safe_load(f)
         assert isinstance(attrs, dict)
     except:
-        return normalize()
+        return _normalize()
     # change hyphenated-keys to underscored_keys
-    return normalize(**{key.replace('-', '_'): value
-                        for key, value in attrs.items()})
+    return _normalize(**{key.replace('-', '_'): value
+                         for key, value in attrs.items()})
 
 _defaults = {
     'shell': getenv('SHELL', '/bin/sh'),
@@ -67,13 +67,13 @@ _defaults = {
 }
 _valid_colors_lengths = {8, 16, 232, 256}
 
-def normalize(shell: str = _defaults['shell'],
-              home: str = _defaults['home'],
-              font: str = _defaults['font'],
-              colors: list = _defaults['colors'],
-              opacity: float = _defaults['opacity'],
-              tmux: bool = _defaults['tmux'],
-              **kwargs):
+def _normalize(shell: str = _defaults['shell'],
+               home: str = _defaults['home'],
+               font: str = _defaults['font'],
+               colors: list = _defaults['colors'],
+               opacity: float = _defaults['opacity'],
+               tmux: bool = _defaults['tmux'],
+               **kwargs):
     """
     Return a normalized version of the settings configuration.
     Raise InvalidSettingsError if the settings are invalid.

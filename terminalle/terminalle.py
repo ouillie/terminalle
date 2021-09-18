@@ -1,14 +1,33 @@
 
 from os import system
-from typing import Dict, Callable
+from functools import partial
+from typing import Callable, Dict, Tuple
 
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('Vte', '2.91')
 from gi.repository import Gtk, Gdk, GLib, Gio, GObject, Vte
 
+SERVICE_NAME = 'party.will.Terminalle'
+OBJECT_PATH = '/party/will/Terminalle'
+SERVICE_XML = f'''
+<!DOCTYPE node PUBLIC
+    "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+    "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd" >
+<node>
+  <interface name="{SERVICE_NAME}">
+    <method name="Toggle" />
+    <method name="MoveRight" />
+    <method name="MoveLeft" />
+    <method name="MoveDown" />
+    <method name="MoveUp" />
+    <method name="Quit" />
+  </interface>
+</node>
+'''
+
 class Terminalle:
-    """ Manages the window. """
+    """ Manages the D-Bus service and the terminal window. """
 
     def __init__(self, settings: Dict[str, object], show: bool):
         """ Initialize the window and VTE widget. """
@@ -39,13 +58,14 @@ class Terminalle:
         _init_ctrl_shift_handler('c', window, accel_group, self._copy_clipboard)
         _init_ctrl_shift_handler('v', window, accel_group, self._paste_clipboard)
         if settings['tmux']:
-            # Hardwire recommended shortcuts that are impossible to bind from `.tmux.conf`.
+            # Hardwire shortcuts that are generally impossible to configure in `.tmux.conf`.
             for key_name, cmd in [('quotedbl', 'split-window'),
                                   ('percent', 'split-window -h'),
                                   ('braceleft', 'swap-pane -U'),
                                   ('braceright', 'swap-pane -D'),
                                   ('bracketleft', 'copy-mode'),
-                                  ('bracketright', 'paste-buffer')]:
+                                  ('bracketright', 'paste-buffer'),
+                                  ('x', 'confirm-before -p \'kill-pane #P? (y/n)\' kill-pane')]:
                 _init_ctrl_handler(key_name, window, accel_group, _tmux_cmd(cmd))
         window.add_accel_group(accel_group)
 
@@ -84,6 +104,34 @@ class Terminalle:
         else:
             # Only show the child widgets, waiting for the toggle signal to show the window.
             self.terminal.show_all()
+        Gio.bus_own_name(Gio.BusType.SESSION,
+                         SERVICE_NAME,
+                         Gio.BusNameOwnerFlags.DO_NOT_QUEUE,
+                         None,
+                         self._on_name_acquired,
+                         self._on_name_lost)
+
+    def _on_name_acquired(self, connection: Gio.DBusConnection, name: str) -> None:
+        self.methods = {'Toggle': self.toggle,
+                        'MoveRight': partial(self.move, 0, 1),
+                        'MoveLeft': partial(self.move, 0, -1),
+                        'MoveDown': partial(self.move, 1, 1),
+                        'MoveUp': partial(self.move, 1, -1),
+                        'Quit': self.quit}
+        service = Gio.DBusNodeInfo.new_for_xml(SERVICE_XML)
+        connection.register_object(OBJECT_PATH, service.interfaces[0], self._on_method_call)
+
+    def _on_name_lost(self, connection: Gio.DBusConnection, name: str) -> None:
+        self.quit()
+        raise RuntimeError(f'Service \'{name}\' already in-use.')
+
+    def _on_method_call(self,
+                       connection: Gio.DBusConnection,
+                       sender: str, object_path: str, interface_name: str,
+                       method_name: str, parameters: Tuple,
+                       invocation: Gio.DBusMethodInvocation) -> None:
+        self.methods[method_name]()
+        invocation.return_value()
 
     def toggle(self):
         """ Toggle window visibility. """
@@ -96,37 +144,34 @@ class Terminalle:
             self.window.show()
             self.window.grab_focus()
 
-    def quit(self):
-        """ Close the window and exit the GTK main loop. """
-        GLib.idle_add(self._quit)
-
     def move(self, axis: int, direction: int):
-        """ Move the window to an adjacent monitor.
+        """ Move the window to the closest adjacent monitor in a particular direction.
+
         `axis` must be either `0` (x-axis) or `1` (y-axis).
-        `direction` must be either `1` (down / right) or `-1` (up / left).
+        `direction` must be either `1` (right / down) or `-1` (left / up).
         """
         if self.window.is_active():
             display = self.window.get_display()
-            curr_geometry = display.get_monitor_at_window(self.window).get_geometry()
-            mid = (curr_geometry.x + (curr_geometry.width * 0.5),
-                   curr_geometry.y + (curr_geometry.height * 0.5))
+            curr_geometry = display.get_monitor_at_window(self.window.get_window()).get_geometry()
+            mid = (curr_geometry.x + 0.5 * curr_geometry.width,
+                   curr_geometry.y + 0.5 * curr_geometry.height)
             curr_mid_on = mid[axis]
             curr_mid_off = mid[1 - axis]
             best_gain = None
             best_monitor = None
             for i in range(display.get_n_monitors()):
                 geometry = display.get_monitor(i).get_geometry()
-                mid = (geometry.x + (geometry.width * 0.5),
-                       geometry.y + (geometry.height * 0.5))
+                mid = (geometry.x + 0.5 * geometry.width,
+                       geometry.y + 0.5 * geometry.height)
                 mid_on = mid[axis]
                 mid_off = mid[1 - axis]
-                gain = mid_on * direction - curr_mid_on
+                gain = (mid_on - curr_mid_on) * direction
                 if gain > 0 and (best_gain is None or gain < best_gain) \
-                        and gain > abs(curr_mid_off - mid_off):
+                        and gain > abs(mid_off - curr_mid_off):
                     best_gain = gain
                     best_monitor = i
             if best_monitor is not None:
-                self.window.fullscreen_on_monitor(screen, best_monitor)
+                self.window.fullscreen_on_monitor(display.get_default_screen(), best_monitor)
 
     def _copy_clipboard(self, window: Gtk.Window):
         self.terminal.copy_clipboard_format(Vte.Format.TEXT)
@@ -139,6 +184,10 @@ class Terminalle:
 
     def _term_exited(self, terminal: Vte.Terminal, status: int):
         self.quit()
+
+    def quit(self):
+        """ Close the window and exit the GTK main loop. """
+        GLib.idle_add(self._quit)
 
     def _quit(self):
         self.window.close()
@@ -165,10 +214,11 @@ def _init_handler(signal_name: str,
                        None, ())
     window.connect(signal_name, handler)
     window.add_accelerator(signal_name, accel_group,
-                        Gdk.keyval_from_name(key_name), mod_mask,
-                        Gtk.AccelFlags.LOCKED)
+                           Gdk.keyval_from_name(key_name), mod_mask,
+                           Gtk.AccelFlags.LOCKED)
 
 def _tmux_cmd(cmd: str):
     def _handler(window: Gtk.Window):
+        print(cmd)
         system(f'tmux {cmd}')
     return _handler

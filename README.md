@@ -1,19 +1,19 @@
 # TERMINALLE
 
-A modern, extremely minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
+A modern, minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
 for freedesktop.org-compatible desktops (e.g. GNOME, KDE).
-Use [D-Bus][1] to toggle window visibility or quit.
-
-Based on [VTE][2], the business logic of this Python package is contained entirely in
-[a ~150-line file][3] &mdash; which mostly just configures keyboard shortcuts &mdash;
-making it easy to inspect and modify.
 
 It omits many features common in other terminal emulators, such as tabs,
-because it's meant to be used in conjunction with a terminal multiplexer
-such as [tmux][4], which offers a stable, powerful, and mature UI.
-See also [tmux mode][5] for enhanced tmux features.
+because it's meant to be used in conjunction with a terminal multiplexer such as [tmux][1],
+which offers a solid, mature UI.
+See also [tmux mode][2] for enhanced tmux features.
+
+Based on [VTE][3], the business logic of this Python package is contained entirely in
+[a ~200-line file][4], making it easy to inspect and modify.
 
 ## Usage
+
+Use [D-Bus][5] to control the application.
 
 ```bash
 # See usage info.
@@ -24,11 +24,18 @@ $ terminalle --help
 $ terminalle &
 
 # Toggle window visibility.
-$ dbus-send --session --type=method_call --dest=org.freedesktop.Terminalle /org/freedesktop/Terminalle org.freedesktop.Terminalle.Toggle
+$ dbus-send --session --type=method_call --dest=party.will.Terminalle /party/will/Terminalle party.will.Terminalle.Toggle
 
 # Close the window and kill the server.
-$ dbus-send --session --type=method_call --dest=org.freedesktop.Terminalle /org/freedesktop/Terminalle org.freedesktop.Terminalle.Quit
+$ dbus-send --session --type=method_call --dest=party.will.Terminalle /party/will/Terminalle party.will.Terminalle.Quit
 ```
+
+In addition to `Toggle` and `Quit`,
+there are four methods to move the terminal window between monitors:
+`MoveRight`, `MoveLeft`, `MoveDown`, and `MoveUp`,
+each of which moves the window to the next adjacent monitor in a particular direction.
+This only works while the window is open.
+See [shortcuts][6] for info on mapping keybindings to these D-Bus methods.
 
 Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 
@@ -57,15 +64,15 @@ $ gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings 
 
 # WARNING: This will overwrite any existing custom keybinding called 'custom0'.
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Toggle Terminalle"
-$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "dbus-send --session --type=method_call --dest=org.freedesktop.Terminalle /org/freedesktop/Terminalle org.freedesktop.Terminalle.Toggle"
+$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "dbus-send --session --type=method_call --dest=party.will.Terminalle /party/will/Terminalle party.will.Terminalle.Toggle"
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>Return"
 ```
 
-[KDE][6] can configure shortcuts to call D-Bus methods directly.
+[KDE][7] can configure shortcuts to call D-Bus methods directly.
 
 ## Configuration
 
-See an [example configuration][7]. See the defaults in [`settings.py`][8].
+See an [example configuration][8]. See the defaults in [`settings.py`][9].
 Defaults can be selectively overridden in `${XDG_CONFIG_HOME}/terminalle.yaml`
 (typically, `${HOME}/.config/terminalle.yaml`).
 
@@ -79,18 +86,19 @@ Generally replacing the tmux prefix with a simple `Ctrl` modifier,
 it cuts the number of keystrokes in half
 without requiring you to memorize new shortcuts.
 If you're a tmux power-user, this will **change** things for you.
-Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][9]).
+Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][10]).
 
 The following shortcuts are enabled in tmux mode:
 
-| tmux default | tmux mode | Command           |
-| -----------: | --------: | :---------------- |
-| `<Prefix> "` |  `Ctrl+"` | `split-window`    |
-| `<Prefix> %` |  `Ctrl+%` | `split-window -h` |
-| `<Prefix> {` |  `Ctrl+{` | `swap-pane -U`    |
-| `<Prefix> }` |  `Ctrl+}` | `swap-pane -D`    |
-| `<Prefix> [` |  `Ctrl+[` | `copy-mode`       |
-| `<Prefix> ]` |  `Ctrl+]` | `paste-buffer`    |
+| tmux default | tmux mode | Command                          |
+| -----------: | --------: | :------------------------- |
+| `<Prefix> "` |  `Ctrl+"` | `split-window`             |
+| `<Prefix> %` |  `Ctrl+%` | `split-window -h`          |
+| `<Prefix> {` |  `Ctrl+{` | `swap-pane -U`             |
+| `<Prefix> }` |  `Ctrl+}` | `swap-pane -D`             |
+| `<Prefix> [` |  `Ctrl+[` | `copy-mode`                |
+| `<Prefix> ]` |  `Ctrl+]` | `paste-buffer`             |
+| `<Prefix> x` |  `Ctrl+x` | `confirm-before kill-pane` |
 
 To reap maximum benefits, add the following to your `.tmux.conf`,
 taking care of other common tmux shortcuts that do not get mangled by typical terminal emulators:
@@ -115,15 +123,16 @@ bind -n C-p previous-window            # Ctrl+p
 bind -n C-Space next-layout            # Ctrl+Space
 ```
 
-This all goes especially well with something like [vim-tmux-navigator][10].
+This all goes especially well with something like [vim-tmux-navigator][11].
 
-[1]: https://www.freedesktop.org/wiki/Software/dbus/
-[2]: https://wiki.gnome.org/Apps/Terminal/VTE
-[3]: terminalle/terminalle.py
-[4]: https://tmux.github.io/
-[5]: #tmux-mode
-[6]: https://docs.kde.org/trunk5/en/khotkeys/kcontrol/khotkeys/khotkeys.pdf
-[7]: terminalle.yaml
-[8]: terminalle/settings.py
-[9]: #configuration
-[10]: https://github.com/christoomey/vim-tmux-navigator
+[1]: https://tmux.github.io/
+[2]: #tmux-mode
+[3]: https://wiki.gnome.org/Apps/Terminal/VTE
+[4]: terminalle/terminalle.py
+[5]: https://www.freedesktop.org/wiki/Software/dbus/
+[6]: #shortcuts
+[7]: https://docs.kde.org/trunk5/en/khotkeys/kcontrol/khotkeys/khotkeys.pdf
+[8]: terminalle.yaml
+[9]: terminalle/settings.py
+[10]: #configuration
+[11]: https://github.com/christoomey/vim-tmux-navigator

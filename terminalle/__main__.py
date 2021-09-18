@@ -1,33 +1,15 @@
-#!/usr/bin/python3
+#!python3
 
-from os import getenv
 from os.path import join as join_path
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-from dbus import SessionBus
-from dbus.service import Object as DBusObject, BusName, method
-from dbus.mainloop.glib import DBusGMainLoop
-
-from . import Terminalle, load_settings, service_name
+from . import Terminalle, load_settings
 from .auto import auto, no_auto, xdg_config_home_path
 
-class Controller(DBusObject):
-
-    def __init__(self, term, bus, object_path='/org/freedesktop/Terminalle'):
-        super().__init__(bus, object_path)
-        self.term = term
-
-    @method(service_name)
-    def Toggle(self):
-        self.term.toggle()
-
-    @method(service_name)
-    def Quit(self):
-        self.term.quit()
-
-def build_parser():
+def build_argparse() -> ArgumentParser:
     parser = ArgumentParser(description='A fancy "drop-down" terminal emulateur.',
-                            formatter_class=ArgumentDefaultsHelpFormatter)
+                            formatter_class=ArgumentDefaultsHelpFormatter,
+                            epilog='https://will.party/terminalle')
     parser.add_argument('-v', '--version', action='version', version='1.0')
     parser.add_argument('-c', '--config', metavar='PATH',
                         help='load config settings from PATH',
@@ -63,15 +45,9 @@ def build_parser():
     return parser
 
 def main():
-    args = build_parser().parse_args()
+    args = build_argparse().parse_args()
     if args.subcommand is None:
-        # By default, run a new instance of the application.
-        loop = DBusGMainLoop(set_as_default=True)
-        bus = SessionBus()
-        name = BusName(service_name, bus)
-        term = Terminalle(settings=load_settings(args.config), show=args.show)
-        ctrl = Controller(term, bus)
-        term.run()
+        Terminalle(settings=load_settings(args.config), show=args.show).run()
     elif args.subcommand == 'auto':
         auto(args.system, args.force,
              not args.no_start_on_login, not args.no_restart_if_closed)
