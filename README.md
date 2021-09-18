@@ -24,10 +24,10 @@ $ terminalle --help
 $ terminalle &
 
 # Toggle window visibility.
-$ dbus-send --session --type=method_call --dest=org.gnome.Terminalle /org/gnome/Terminalle org.gnome.Terminalle.Toggle
+$ dbus-send --session --type=method_call --dest=org.freedesktop.Terminalle /org/freedesktop/Terminalle org.freedesktop.Terminalle.Toggle
 
 # Close the window and kill the server.
-$ dbus-send --session --type=method_call --dest=org.gnome.Terminalle /org/gnome/Terminalle org.gnome.Terminalle.Quit
+$ dbus-send --session --type=method_call --dest=org.freedesktop.Terminalle /org/freedesktop/Terminalle org.freedesktop.Terminalle.Quit
 ```
 
 Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
@@ -57,7 +57,7 @@ $ gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings 
 
 # WARNING: This will overwrite any existing custom keybinding called 'custom0'.
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Toggle Terminalle"
-$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "dbus-send --session --type=method_call --dest=org.gnome.Terminalle /org/gnome/Terminalle org.gnome.Terminalle.Toggle"
+$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "dbus-send --session --type=method_call --dest=org.freedesktop.Terminalle /org/freedesktop/Terminalle org.freedesktop.Terminalle.Toggle"
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>Return"
 ```
 

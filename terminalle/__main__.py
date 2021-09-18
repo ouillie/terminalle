@@ -13,7 +13,7 @@ from .auto import auto, no_auto, xdg_config_home_path
 
 class Controller(DBusObject):
 
-    def __init__(self, term, bus, object_path='/org/gnome/Terminalle'):
+    def __init__(self, term, bus, object_path='/org/freedesktop/Terminalle'):
         super().__init__(bus, object_path)
         self.term = term
 
