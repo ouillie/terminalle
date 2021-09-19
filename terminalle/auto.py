@@ -45,13 +45,13 @@ def auto(system: bool, force: bool, start_on_login: bool, restart_if_closed: boo
                     real_src = readlink(dest)
                     if real_src == src:
                         print(f'Symlink already exists: {dest}\n'
-                              f'                     -> {src}', file=stderr)
+                              f'                      → {src}', file=stderr)
                         continue
                     elif force:
                         unlink(dest)
                     else:
                         print(f'Unexpected symlink: {dest}\n'
-                              f'                 -> {real_src}\n'
+                              f'                  → {real_src}\n'
                               '(use `--force` to overwrite it)', file=stderr)
                         continue
                 elif force:
@@ -64,7 +64,7 @@ def auto(system: bool, force: bool, start_on_login: bool, restart_if_closed: boo
                 makedirs(dirname(dest), mode=0o755, exist_ok=True)
             symlink(src, dest)
             print(f'Created symlink: {dest}\n'
-                  f'              -> {src}', file=stderr)
+                  f'               → {src}', file=stderr)
 
 def no_auto(system: bool, force: bool):
     desktop_dests, desktop_src, service_dests, service_src =  _get_dests_and_srcs(system)
@@ -78,7 +78,7 @@ def no_auto(system: bool, force: bool):
                     else:
                         real_src = readlink(dest)
                         print(f'Unexpected symlink: {dest}\n'
-                              f'                 -> {real_src}'
+                              f'                  → {real_src}'
                               '(use `--force` to delete it anyway)', file=stderr)
                 else:
                     print(f'Unexpected file: {dest}\n'

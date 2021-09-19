@@ -123,7 +123,7 @@ class Terminalle:
 
     def _on_name_lost(self, connection: Gio.DBusConnection, name: str) -> None:
         self.quit()
-        raise RuntimeError(f'Service \'{name}\' already in-use.')
+        raise RuntimeError(f'Interface \'{name}\' already in use.')
 
     def _on_method_call(self,
                        connection: Gio.DBusConnection,
