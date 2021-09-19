@@ -68,6 +68,9 @@ $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>Return"
 ```
 
+If you use multiple monitors,
+considering hooking up shortcuts for the aforementioned movement methods as well.
+
 [KDE][7] can configure shortcuts to call D-Bus methods directly.
 
 ## Configuration
@@ -90,7 +93,7 @@ Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][10]
 
 The following shortcuts are enabled in tmux mode:
 
-| tmux default | tmux mode | Command                          |
+| tmux default | tmux mode | Command                    |
 | -----------: | --------: | :------------------------- |
 | `<Prefix> "` |  `Ctrl+"` | `split-window`             |
 | `<Prefix> %` |  `Ctrl+%` | `split-window -h`          |
@@ -116,14 +119,15 @@ bind -n M-Down resize-pane -D 5        # Alt+Down
 bind -n M-Left resize-pane -L 5        # Alt+Left
 bind -n M-Right resize-pane -R 5       # Alt+Right
 
-# Note that `new-window` is not shortened because `Ctrl+c` sends `SIGINT`.
+# Note that `new-window` is not shortened because `Ctrl+c` should send `SIGINT`.
 bind -n C-n next-window                # Ctrl+n
 bind -n C-p previous-window            # Ctrl+p
 
 bind -n C-Space next-layout            # Ctrl+Space
 ```
 
-This all goes especially well with something like [vim-tmux-navigator][11].
+This all goes especially well with [vim-tmux-navigator][11],
+which provides shortened bindings for switching seemlessly between tmux panes and Vim windows.
 
 [1]: https://tmux.github.io/
 [2]: #tmux-mode
