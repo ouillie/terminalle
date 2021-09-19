@@ -64,8 +64,7 @@ class Terminalle:
                                   ('braceleft', 'swap-pane -U'),
                                   ('braceright', 'swap-pane -D'),
                                   ('bracketleft', 'copy-mode'),
-                                  ('bracketright', 'paste-buffer'),
-                                  ('x', 'confirm-before -p \'kill-pane #P? (y/n)\' kill-pane')]:
+                                  ('bracketright', 'paste-buffer')]:
                 _init_ctrl_handler(key_name, window, accel_group, _tmux_cmd(cmd))
         window.add_accel_group(accel_group)
 
