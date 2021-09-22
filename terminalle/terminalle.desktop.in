@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Terminalle
-Comment=A fancy drop-down terminal emulateur.
+Comment=${DESCRIPTION}
 Type=Application
 Terminal=false
 Exec=/usr/bin/env terminalle

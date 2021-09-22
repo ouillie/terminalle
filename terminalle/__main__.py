@@ -3,13 +3,13 @@
 from os.path import join as join_path
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-from . import Terminalle, load_settings, __version__
+from . import Terminalle, load_settings, __version__, __description__, __url__
 from .auto import auto, no_auto, xdg_config_home_path
 
 def build_argparse() -> ArgumentParser:
-    parser = ArgumentParser(description='A fancy "drop-down" terminal emulateur.',
+    parser = ArgumentParser(description=__description__,
                             formatter_class=ArgumentDefaultsHelpFormatter,
-                            epilog='https://will.party/terminalle')
+                            epilog=__url__)
     parser.add_argument('-v', '--version', action='version', version=__version__)
     parser.add_argument('-c', '--config', metavar='PATH',
                         help='load config settings from PATH',

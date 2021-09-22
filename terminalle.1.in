@@ -1,7 +1,10 @@
-.TH terminalle 1 "2021-10-03" "v0.5"
+.TH terminalle 1 "${DATE}" "v${VERSION}"
 
 .SH NAME
 Terminalle
+
+.SH DESCRIPTION
+${DESCRIPTION}
 
 .SH SYNOPSIS
 .B terminalle
@@ -11,9 +14,6 @@ Terminalle
 .B terminalle
 COMMAND [COMMAND-OPTION ...]
 .PD
-
-.SH DESCRIPTION
-A fancy "drop\-down" terminal emulateur.
 
 .SH OPTIONS
 .TP
@@ -74,13 +74,13 @@ delete files even if the contents are unexpected
 print help message and exit
 
 .SH AUTHORS
-Will Noble
-.MT author@will.party
+${AUTHOR}
+.MT ${EMAIL}
 .ME .
 
 .SH DISTRIBUTION
 Documentation:
-.UR https://will.party/terminalle
+.UR ${URL}
 .UE
 .PD 0
 .LP
