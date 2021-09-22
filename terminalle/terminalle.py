@@ -13,7 +13,7 @@ OBJECT_PATH = '/party/will/Terminalle'
 SERVICE_XML = f'''
 <!DOCTYPE node PUBLIC
     "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
-    "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd" >
+    "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="{SERVICE_NAME}">
     <method name="Toggle" />
@@ -124,11 +124,10 @@ class Terminalle:
         self.quit()
         raise RuntimeError(f'Interface \'{name}\' already in use.')
 
-    def _on_method_call(self,
-                       connection: Gio.DBusConnection,
-                       sender: str, object_path: str, interface_name: str,
-                       method_name: str, parameters: Tuple,
-                       invocation: Gio.DBusMethodInvocation) -> None:
+    def _on_method_call(self, connection: Gio.DBusConnection,
+                        sender: str, object_path: str, interface_name: str,
+                        method_name: str, parameters: Tuple,
+                        invocation: Gio.DBusMethodInvocation) -> None:
         self.methods[method_name]()
         invocation.return_value()
 
@@ -171,6 +170,7 @@ class Terminalle:
                     best_monitor = i
             if best_monitor is not None:
                 self.window.fullscreen_on_monitor(display.get_default_screen(), best_monitor)
+                self.window.grab_focus()
 
     def _copy_clipboard(self, window: Gtk.Window):
         self.terminal.copy_clipboard_format(Vte.Format.TEXT)
@@ -218,6 +218,5 @@ def _init_handler(signal_name: str,
 
 def _tmux_cmd(cmd: str):
     def _handler(window: Gtk.Window):
-        print(cmd)
         system(f'tmux {cmd}')
     return _handler
