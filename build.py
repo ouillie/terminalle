@@ -5,20 +5,25 @@ from datetime import date
 from pathlib import Path
 from string import Template
 from functools import wraps
+from ast import parse, Name, Assign, literal_eval
 from typing import Callable
 from setuptools import build_meta
 
-import terminalle
-
-_mapping = {
-    'VERSION': terminalle.__version__,
-    'DESCRIPTION': terminalle.__description__,
-    'LICENSE': terminalle.__license__,
-    'AUTHOR': terminalle.__author__,
-    'EMAIL': terminalle.__email__,
-    'URL': terminalle.__url__,
-    'DATE': date.today().strftime('%Y-%m-%d'),
-}
+_attr_mapping = {'__version__': 'VERSION',
+                 '__description__': 'DESCRIPTION',
+                 '__license__': 'LICENSE',
+                 '__author__': 'AUTHOR',
+                 '__email__': 'EMAIL',
+                 '__url__': 'URL'}
+with open('terminalle/__init__.py', 'r') as file:
+    _mapping = {name: literal_eval(node.value)
+                for node in parse(file.read()).body
+                if isinstance(node, Assign)
+                for attr, name in _attr_mapping.items()
+                if any(isinstance(target, Name) and target.id == attr
+                       for target in node.targets)}
+_mapping['DATE'] = date.today().strftime('%Y-%m-%d')
+del _attr_mapping
 
 def _render_templates_first(f: Callable) -> Callable:
     @wraps(f)

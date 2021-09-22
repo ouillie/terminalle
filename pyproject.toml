@@ -1,6 +1,4 @@
 [build-system]
-# Since the build backend imports the entire module,
-# all runtime dependencies are also build dependencies.
-requires = ["setuptools", "wheel", "PyGObject", "PyYAML"]
+requires = ["setuptools", "wheel"]
 backend-path = ["."]
 build-backend = "build"
