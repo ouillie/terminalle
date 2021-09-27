@@ -75,7 +75,6 @@ class Terminalle:
 
     def run(self):
         """ Open the TTY and enter the GTK main loop. """
-        term_spawn_canceller = Gio.Cancellable.new()
         self.terminal.spawn_async(
             Vte.PtyFlags.DEFAULT,
             self.settings['home'],            # Initial working directory.
@@ -85,13 +84,10 @@ class Terminalle:
             None,                             # Callback for child setup.
             None,                             # User data passed to callback.
             -1,                               # Use the default timeout.
-            term_spawn_canceller,             # In case we need to cancel the spawn.
+            None,                             # Gio Cancellable; not supported on legacy KDE
             self._term_spawn_async_callback,  # Callback after spawn complete.
             None)                             # User data passed to callback.
-        try:
-            Gtk.main()
-        finally:
-            term_spawn_canceller.cancel()
+        Gtk.main()
 
     def _term_spawn_async_callback(self, terminal, pid, error, user_data):
         if error is not None:
