@@ -2,4 +2,4 @@
 from .terminalle import Terminalle
 from .settings import load as load_settings
 
-__version__ = '0.4'
+__version__ = '0.5'
