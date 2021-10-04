@@ -40,21 +40,21 @@ def auto(system: bool, force: bool, start_on_login: bool, restart_if_closed: boo
     for enable, src, dest in [(start_on_login, desktop_src, desktop_dests[-1]),
                               (restart_if_closed, service_src, service_dests[-1])]:
         if enable:
-            if isfile(dest):
-                if islink(dest):
-                    real_src = readlink(dest)
-                    if real_src == src:
-                        print(f'Symlink already exists: {dest}\n'
-                              f'                      → {src}', file=stderr)
-                        continue
-                    elif force:
-                        unlink(dest)
-                    else:
-                        print(f'Unexpected symlink: {dest}\n'
-                              f'                  → {real_src}\n'
-                              '(use `--force` to overwrite it)', file=stderr)
-                        continue
+            if islink(dest):
+                existing_src = readlink(dest)
+                if existing_src == src:
+                    print(f'Symlink already exists: {dest}\n'
+                          f'                      → {src}', file=stderr)
+                    continue
                 elif force:
+                    unlink(dest)
+                else:
+                    print(f'Unexpected symlink: {dest}\n'
+                          f'                  → {existing_src}\n'
+                          '(use `--force` to overwrite it)', file=stderr)
+                    continue
+            elif isfile(dest):
+                if force:
                     unlink(dest)
                 else:
                     print(f'Unexpected file: {dest}\n'
@@ -70,16 +70,19 @@ def no_auto(system: bool, force: bool):
     desktop_dests, desktop_src, service_dests, service_src =  _get_dests_and_srcs(system)
     for src, dests in [(desktop_src, desktop_dests), (service_src, service_dests)]:
         for dest in dests:
-            if isfile(dest):
-                if force or islink(dest):
-                    if force or readlink(dest) == src:
-                        unlink(dest)
-                        print(f'Deleted: {dest}', file=stderr)
-                    else:
-                        real_src = readlink(dest)
-                        print(f'Unexpected symlink: {dest}\n'
-                              f'                  → {real_src}'
-                              '(use `--force` to delete it anyway)', file=stderr)
-                else:
+            if islink(dest):
+                existing_src = readlink(dest)
+                if existing_src != src and not force:
+                    print(f'Unexpected symlink: {dest}\n'
+                          f'                  → {existing_src}\n'
+                          '(use `--force` to delete it anyway)', file=stderr)
+                    continue
+            elif isfile(dest):
+                if not force:
                     print(f'Unexpected file: {dest}\n'
                           '(use `--force` to delete it anyway)', file=stderr)
+                    continue
+            else:
+                continue
+            unlink(dest)
+            print(f'Deleted: {dest}', file=stderr)
