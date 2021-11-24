@@ -37,6 +37,8 @@ class Terminalle:
         window.set_keep_above(True)
         window.set_skip_taskbar_hint(True)
         window.set_skip_pager_hint(True)
+        window.set_decorated(False)
+        window.set_type_hint(Gdk.WindowTypeHint.DOCK)
         # For some reason the top-level window opacity must not be 1
         # in order to enable any kind of child widget transparency.
         window.set_opacity(.99)
