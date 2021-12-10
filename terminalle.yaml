@@ -26,4 +26,6 @@ opacity: 0.75
 #   Ctrl+% -> split-window -h
 #   Ctrl+{ -> swap-pane -U
 #   Ctrl+} -> swap-pane -D
+#   Ctrl+[ -> copy-mode
+#   Ctrl+] -> paste-buffer
 tmux: true

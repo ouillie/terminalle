@@ -5,7 +5,7 @@ for freedesktop.org-compatible desktops (e.g. GNOME, KDE).
 
 It omits many features common in other terminal emulators, such as tabs,
 because it's meant to be used in conjunction with a terminal multiplexer such as [tmux][1],
-which offers a solid, mature UI.
+which has a solid, mature UI.
 See also [tmux mode][2] for enhanced tmux features.
 
 Based on [VTE][3], the business logic of this Python package is contained entirely in
@@ -69,7 +69,7 @@ $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/
 ```
 
 If you use multiple monitors,
-considering hooking up shortcuts for the aforementioned movement methods as well.
+consider hooking up shortcuts for the aforementioned movement methods as well.
 
 [KDE][7] can configure shortcuts to call D-Bus methods directly.
 
@@ -107,22 +107,21 @@ taking care of other common tmux shortcuts that do not get mangled by typical te
 
 ```bash
 # Generally shorten `Ctrl+b <X>` to `Ctrl+<X>` for various `<X>`.
-bind -n C-Up     resize-pane -U
-bind -n C-Down   resize-pane -D
-bind -n C-Left   resize-pane -L
-bind -n C-Right  resize-pane -R
-
-# Generally shorten `Ctrl+b Meta+<X>` to `Meta+<X>`.
-bind -n M-Up     resize-pane -U 5
-bind -n M-Down   resize-pane -D 5
-bind -n M-Left   resize-pane -L 5
-bind -n M-Right  resize-pane -R 5
-
 # Note that `new-window` is not shortened because `Ctrl+c` should send `SIGINT`.
 bind -n C-n      next-window
 bind -n C-p      previous-window
 bind -n C-Space  next-layout
 bind -n C-x      confirm-before -p 'kill-pane #P? (y/n)' kill-pane
+
+# Resize panes using arrow keys and either `Ctrl` or `Meta`.
+bind -n C-Up     resize-pane -U
+bind -n M-Up     resize-pane -U 5
+bind -n C-Down   resize-pane -D
+bind -n M-Down   resize-pane -D 5
+bind -n C-Left   resize-pane -L
+bind -n M-Left   resize-pane -L 5
+bind -n C-Right  resize-pane -R
+bind -n M-Right  resize-pane -R 5
 ```
 
 This all goes especially well with [vim-tmux-navigator][11],
