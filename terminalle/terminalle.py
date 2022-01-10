@@ -26,6 +26,30 @@ SERVICE_XML = f'''
 </node>
 '''
 
+# https://github.com/tmux/tmux/blob/28b6237c623f507188a782a016563c78dd0ffb85/key-bindings.c#L344
+# https://cgit.freedesktop.org/xorg/proto/x11proto/plain/keysymdef.h
+_default_tmux_commands = [
+    ('exclam', 'break-pane'),
+    ('quotedbl', 'split-window'),
+    ('numbersign', 'list-buffers'),
+    ('dollar', 'command-prompt -I "#S" "rename-session -- '"'"'%%'"'"'"'),
+    ('percent', 'split-window -h'),
+    ('ampersand', 'confirm-before -p "kill-window #W? (y/n)" kill-window'),
+    ('apostrophe', 'command-prompt -T window-target -p "index" "select-window -t '"'"':%%'"'"'"'),
+    ('parenleft', 'switch-client -p'),
+    ('parenright', 'switch-client -n'),
+    ('comma', 'command-prompt -I "#W" "rename-window -- '"'"'%%'"'"'"'),
+    # ('minus', 'delete-buffer'),
+    # ('period', 'command-prompt -T target "move-window -t '"'"'%%'"'"'"'),
+    ('colon', 'command-prompt'),
+    ('semicolon', 'last-pane'),
+    ('equal', 'choose-buffer -Z'),
+    ('bracketleft', 'copy-mode'),
+    ('bracketright', 'paste-buffer'),
+    ('braceleft', 'swap-pane -U'),
+    ('braceright', 'swap-pane -D'),
+]
+
 class Terminalle:
     """ Manages the D-Bus service and the terminal window. """
 
@@ -61,12 +85,7 @@ class Terminalle:
         _init_ctrl_shift_handler('v', window, accel_group, self._paste_clipboard)
         if settings['tmux']:
             # Hardwire shortcuts that are generally impossible to configure in `.tmux.conf`.
-            for key_name, cmd in [('quotedbl', 'split-window'),
-                                  ('percent', 'split-window -h'),
-                                  ('braceleft', 'swap-pane -U'),
-                                  ('braceright', 'swap-pane -D'),
-                                  ('bracketleft', 'copy-mode'),
-                                  ('bracketright', 'paste-buffer')]:
+            for key_name, cmd in _default_tmux_commands:
                 _init_ctrl_handler(key_name, window, accel_group, _tmux_cmd(cmd))
         window.add_accel_group(accel_group)
 
