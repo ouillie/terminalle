@@ -93,25 +93,42 @@ Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][10]
 
 The following shortcuts are enabled in tmux mode:
 
-| tmux default | tmux mode | Command                    |
-| -----------: | --------: | :------------------------- |
-| `<Prefix> "` |  `Ctrl+"` | `split-window`             |
-| `<Prefix> %` |  `Ctrl+%` | `split-window -h`          |
-| `<Prefix> {` |  `Ctrl+{` | `swap-pane -U`             |
-| `<Prefix> }` |  `Ctrl+}` | `swap-pane -D`             |
-| `<Prefix> [` |  `Ctrl+[` | `copy-mode`                |
-| `<Prefix> ]` |  `Ctrl+]` | `paste-buffer`             |
+| tmux mode | tmux default | Command                                                               |
+| --------: | -----------: | :------------------------------------------------------------------   |
+|  `Ctrl+!` | `<Prefix> !` | `break-pane`                                                          |
+|  `Ctrl+"` | `<Prefix> "` | `split-window`                                                        |
+|  `Ctrl+#` | `<Prefix> #` | `list-buffers`                                                        |
+|  `Ctrl+$` | `<Prefix> $` | `command-prompt -I "#S" "rename-session -- '%%'"`                     |
+|  `Ctrl+%` | `<Prefix> %` | `split-window -h`                                                     |
+|  `Ctrl+&` | `<Prefix> &` | `confirm-before -p "kill-window #W? (y/n)" kill-window`               |
+|  `Ctrl+'` | `<Prefix> '` | `command-prompt -T window-target -p "index" "select-window -t ':%%'"` |
+|  `Ctrl+(` | `<Prefix> (` | `switch-client -p`                                                    |
+|  `Ctrl+)` | `<Prefix> )` | `switch-client -n`                                                    |
+|  `Ctrl+,` | `<Prefix> ,` | `command-prompt -I "#W" "rename-window -- '%%'"`                      |
+|  `Ctrl+:` | `<Prefix> :` | `command-prompt`                                                      |
+|  `Ctrl+;` | `<Prefix> ;` | `last-pane`                                                           |
+|  `Ctrl+=` | `<Prefix> =` | `choose-buffer -Z`                                                    |
+|  `Ctrl+[` | `<Prefix> [` | `copy-mode`                                                           |
+|  `Ctrl+]` | `<Prefix> ]` | `paste-buffer`                                                        |
+|  `Ctrl+{` | `<Prefix> {` | `swap-pane -U`                                                        |
+|  `Ctrl+}` | `<Prefix> }` | `swap-pane -D`                                                        |
 
 To reap maximum benefits, add the following to your `.tmux.conf`,
 taking care of other common tmux shortcuts that do not get mangled by typical terminal emulators:
 
 ```bash
-# Generally shorten `Ctrl+b <X>` to `Ctrl+<X>` for various `<X>`.
-# Note that `new-window` is not shortened because `Ctrl+c` should send `SIGINT`.
+# Generally shorten `<Prefix> <X>` to `Ctrl+<X>` for various `<X>`.
+# Note that some commands (e.g. `<Prefix> c` for `new-window`) would conflict with
+# established control sequences (`Ctrl+c` should send `SIGINT`) if shortened.
+bind -n C-f      command-prompt "find-window -Z -- '%%'"
 bind -n C-n      next-window
+bind -n C-o      select-pane -t ":.+"
 bind -n C-p      previous-window
+bind -n C-q      display-panes
+bind -n C-s      choose-tree -Zs
+bind -n C-t      clock-mode
+bind -n C-x      confirm-before -p "kill-pane #P? (y/n)" kill-pane
 bind -n C-Space  next-layout
-bind -n C-x      confirm-before -p 'kill-pane #P? (y/n)' kill-pane
 
 # Resize panes using arrow keys and either `Ctrl` or `Meta`.
 bind -n C-Up     resize-pane -U
