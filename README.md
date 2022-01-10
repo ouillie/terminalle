@@ -8,12 +8,11 @@ because it's meant to be used in conjunction with a terminal multiplexer such as
 which has a solid, mature UI.
 See also [tmux mode][2] for enhanced tmux features.
 
-Based on [VTE][3], the business logic of this Python package is contained entirely in
-[a ~200-line file][4], making it easy to inspect and modify.
+Based on [VTE][3].
 
 ## Usage
 
-Use [D-Bus][5] to control the application.
+Use [D-Bus][4] to control the application.
 
 ```bash
 # See usage info.
@@ -35,7 +34,7 @@ there are four methods to move the terminal window between monitors:
 `MoveRight`, `MoveLeft`, `MoveDown`, and `MoveUp`,
 each of which moves the window to the next adjacent monitor in a particular direction.
 This only works while the window is open.
-See [shortcuts][6] for info on mapping keybindings to these D-Bus methods.
+See [shortcuts][5] for info on mapping keybindings to these D-Bus methods.
 
 Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 
@@ -71,11 +70,11 @@ $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/
 If you use multiple monitors,
 consider hooking up shortcuts for the aforementioned movement methods as well.
 
-[KDE][7] can configure shortcuts to call D-Bus methods directly.
+[KDE][6] can configure shortcuts to call D-Bus methods directly.
 
 ## Configuration
 
-See an [example configuration][8]. See the defaults in [`settings.py`][9].
+See an [example configuration][7]. See the defaults in [`settings.py`][8].
 Defaults can be selectively overridden in `${XDG_CONFIG_HOME}/terminalle.yaml`
 (typically, `${HOME}/.config/terminalle.yaml`).
 
@@ -89,7 +88,7 @@ Generally replacing the tmux prefix with a simple `Ctrl` modifier,
 it cuts the number of keystrokes in half
 without requiring you to memorize new shortcuts.
 If you're a tmux power-user, this will **change** things for you.
-Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][10]).
+Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][9]).
 
 The following shortcuts are enabled in tmux mode:
 
@@ -141,17 +140,16 @@ bind -n C-Right  resize-pane -R
 bind -n M-Right  resize-pane -R 5
 ```
 
-This all goes especially well with [vim-tmux-navigator][11],
+This all goes especially well with [vim-tmux-navigator][10],
 which provides shortened bindings for switching seemlessly between tmux panes and Vim windows.
 
 [1]: https://tmux.github.io/
 [2]: #tmux-mode
 [3]: https://wiki.gnome.org/Apps/Terminal/VTE
-[4]: terminalle/terminalle.py
-[5]: https://www.freedesktop.org/wiki/Software/dbus/
-[6]: #shortcuts
-[7]: https://docs.kde.org/trunk5/en/khotkeys/kcontrol/khotkeys/khotkeys.pdf
-[8]: terminalle.yaml
-[9]: terminalle/settings.py
-[10]: #configuration
-[11]: https://github.com/christoomey/vim-tmux-navigator
+[4]: https://www.freedesktop.org/wiki/Software/dbus/
+[5]: #shortcuts
+[6]: https://docs.kde.org/trunk5/en/khotkeys/kcontrol/khotkeys/khotkeys.pdf
+[7]: terminalle.yaml
+[8]: terminalle/settings.py
+[9]: #configuration
+[10]: https://github.com/christoomey/vim-tmux-navigator
