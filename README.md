@@ -43,10 +43,13 @@ Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 ```bash
 $ pip install terminalle
 
-# Optional: enable auto-start (starts the server automatically on login and restarts automatically if exited).
+# Optional: Enable auto-start.
+#           Starts the server automatically (window hidden) on login
+#           and restarts automatically (also hidden) if exited.
 $ terminalle auto
 
-# Optional: disable auto-start (if enabled, it should be disabled prior to uninstalling).
+# Optional: Disable auto-start.
+#           If enabled, it should be disabled prior to uninstalling.
 $ terminalle no-auto
 ```
 
@@ -57,8 +60,8 @@ In GNOME, you can either do that in the GNOME Control Center (a.k.a "Settings"),
 or with `gsettings`:
 
 ```bash
-# WARNING: Running this verbatim will disable any other custom keybindings.
-#          It is merely provided as an example.
+# WARNING: Running this verbatim will disable any existing custom keybindings.
+#          It's an example.
 $ gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
 
 # WARNING: This will overwrite any existing custom keybinding called 'custom0'.
@@ -70,13 +73,13 @@ $ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/
 If you use multiple monitors,
 consider hooking up shortcuts for the aforementioned movement methods as well.
 
-[KDE][6] can configure shortcuts to call D-Bus methods directly.
+[KDE can][6] configure shortcuts to call D-Bus methods directly.
 
 ## Configuration
 
 See an [example configuration][7]. See the defaults in [`settings.py`][8].
-Defaults can be selectively overridden in `${XDG_CONFIG_HOME}/terminalle.yaml`
-(typically, `${HOME}/.config/terminalle.yaml`).
+Defaults can be selectively overridden in
+`${XDG_CONFIG_HOME:-${HOME}/.config}/terminalle.yaml`.
 
 ## TMUX MODE
 
@@ -87,13 +90,13 @@ since terminal emulators typically cannot handle these key combinations.
 Generally replacing the tmux prefix with a simple `Ctrl` modifier,
 it cuts the number of keystrokes in half
 without requiring you to memorize new shortcuts.
-If you're a tmux power-user, this will **change** things for you.
+If you're a tmux power-user, this will *change* things for you.
 Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][9]).
 
 The following shortcuts are enabled in tmux mode:
 
 | tmux default | tmux mode | Command                                                               |
-| -----------: | --------: | :------------------------------------------------------------------   |
+| -----------: | --------: | :-------------------------------------------------------------------- |
 | `<Prefix> !` |  `Ctrl+!` | `break-pane`                                                          |
 | `<Prefix> "` |  `Ctrl+"` | `split-window`                                                        |
 | `<Prefix> #` |  `Ctrl+#` | `list-buffers`                                                        |

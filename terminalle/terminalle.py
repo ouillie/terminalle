@@ -66,8 +66,9 @@ class Terminalle:
         # For some reason the top-level window opacity must not be 1
         # in order to enable any kind of child widget transparency.
         window.set_opacity(.99)
-        window.set_events(Gdk.EventType.FOCUS_CHANGE)
-        window.connect('focus-out-event', self._focus_out)
+        if settings['autohide']:
+            window.set_events(Gdk.EventType.FOCUS_CHANGE)
+            window.connect('focus-out-event', self._autohide)
 
         terminal = Vte.Terminal()
         terminal.set_font(font_desc=settings['font'])
@@ -195,7 +196,7 @@ class Terminalle:
     def _paste_clipboard(self, window: Gtk.Window):
         self.terminal.paste_clipboard()
 
-    def _focus_out(self, window: Gtk.Window, event: Gdk.EventFocus):
+    def _autohide(self, window: Gtk.Window, event: Gdk.EventFocus):
         GLib.idle_add(self.window.hide)
 
     def _term_exited(self, terminal: Vte.Terminal, status: int):

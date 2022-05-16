@@ -1,4 +1,5 @@
 # This is just an example configuation. Values are not necessarily the default.
+# See the defaults in `terminalle/settings.py`.
 shell: '/bin/sh'
 home: '/home/user'
 font: 'Source Code Pro 13'
@@ -20,5 +21,7 @@ colors:
   - '#93a1a1' # bright cyan
   - '#fdf6e3' # bright white
 opacity: 0.75
+# Automatically hide the window when it loses keyboard focus.
+autohide: true
 # See the readme for an explanation of the `tmux` option.
 tmux: true
