@@ -1,7 +1,4 @@
----
-title: Terminalle
----
-# TERMINALLE
+# Terminalle
 
 A modern, minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
 for freedesktop.org-compatible desktops (e.g. GNOME, KDE).
