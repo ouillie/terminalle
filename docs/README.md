@@ -1,3 +1,6 @@
+---
+title: Terminalle
+---
 # TERMINALLE
 
 A modern, minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
