@@ -1,5 +1,3 @@
-# Terminalle
-
 A modern, minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
 for freedesktop.org-compatible desktops (e.g. GNOME, KDE).
 
@@ -16,17 +14,19 @@ Use [D-Bus][4] to control the application.
 
 ```bash
 # See usage info.
-$ terminalle --help
+terminalle --help
 
 # Start the server. The window is initially hidden by default.
 # This is unnecessary if you've enabled auto-start with `terminalle auto`.
-$ terminalle &
+terminalle &
 
 # Toggle window visibility.
-$ dbus-send --session --type=method_call --dest=party.will.Terminalle /party/will/Terminalle party.will.Terminalle.Toggle
+dbus-send --session --type=method_call --dest=party.will.Terminalle \
+    /party/will/Terminalle party.will.Terminalle.Toggle
 
 # Close the window and kill the server.
-$ dbus-send --session --type=method_call --dest=party.will.Terminalle /party/will/Terminalle party.will.Terminalle.Quit
+dbus-send --session --type=method_call --dest=party.will.Terminalle \
+    /party/will/Terminalle party.will.Terminalle.Quit
 ```
 
 In addition to `Toggle` and `Quit`,
@@ -41,16 +41,16 @@ Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 ## Install
 
 ```bash
-$ pip install terminalle
+pip install terminalle
 
 # Optional: Enable auto-start.
 #           Starts the server automatically (window hidden) on login
 #           and restarts automatically on toggle if closed.
-$ terminalle auto
+terminalle auto
 
 # Optional: Disable auto-start.
 #           If enabled, it should be disabled prior to uninstalling.
-$ terminalle no-auto
+terminalle no-auto
 ```
 
 ### Shortcuts
@@ -62,12 +62,12 @@ or with `gsettings`:
 ```bash
 # WARNING: Running this verbatim will disable any existing custom keybindings.
 #          It's an example.
-$ gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
 
 # WARNING: This will overwrite any existing custom keybinding called 'custom0'.
-$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Toggle Terminalle"
-$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "dbus-send --session --type=method_call --dest=party.will.Terminalle /party/will/Terminalle party.will.Terminalle.Toggle"
-$ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>Return"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Toggle Terminalle"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "dbus-send --session --type=method_call --dest=party.will.Terminalle /party/will/Terminalle party.will.Terminalle.Toggle"
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>Return"
 ```
 
 If you use multiple monitors,
