@@ -45,7 +45,7 @@ $ pip install terminalle
 
 # Optional: Enable auto-start.
 #           Starts the server automatically (window hidden) on login
-#           and restarts automatically (also hidden) if exited.
+#           and restarts automatically on toggle if closed.
 $ terminalle auto
 
 # Optional: Disable auto-start.
