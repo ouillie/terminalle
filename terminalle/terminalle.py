@@ -157,7 +157,8 @@ class Terminalle:
         if self.window.is_active():
             self.window.hide()
         else:
-            self.window.show()
+            if not self.window.props.visible:
+                self.window.show()
             self.window.grab_focus()
 
     def move(self, axis: int, direction: int):
