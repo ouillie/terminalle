@@ -10,13 +10,15 @@ Based on [VTE][3].
 
 ## Usage
 
-Use [D-Bus][4] to control the application.
+Whichever process runs `terminalle` is the "server".
+Use [D-Bus][4] to control it.
 
 ```bash
 # See usage info.
 terminalle --help
 
-# Start the server. The window is initially hidden by default.
+# Start the server (in this case, as a background job).
+# The window is initially hidden by default.
 # This is unnecessary if you've enabled auto-start with `terminalle auto`.
 terminalle &
 
