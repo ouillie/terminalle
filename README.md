@@ -1,3 +1,5 @@
+Note: This currently only works with Wayland-based desktop environments.
+
 A modern, minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
 for [freedesktop.org][1]-compatible desktops (e.g. GNOME, KDE).
 
