@@ -57,7 +57,9 @@ class Terminalle:
         """ Initialize the window and VTE widget. """
         window = Gtk.Window()
         window.set_title('Terminalle')
-        window.fullscreen()
+        # Maximize the window because fullscreen does not support transparency.
+        # https://gitlab.freedesktop.org/wayland/wayland-protocols/-/issues/116
+        window.maximize()
         window.set_keep_above(True)
         window.set_skip_taskbar_hint(True)
         window.set_skip_pager_hint(True)
