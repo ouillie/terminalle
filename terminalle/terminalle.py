@@ -1,6 +1,7 @@
 
 from os import system
 from functools import partial
+from math import inf
 from typing import Callable, Dict, Tuple
 
 import gi
@@ -176,7 +177,7 @@ class Terminalle:
                    curr_geometry.y + 0.5 * curr_geometry.height)
             curr_mid_on = mid[axis]
             curr_mid_off = mid[1 - axis]
-            best_gain = None
+            best_gain = inf
             best_monitor = None
             for i in range(display.get_n_monitors()):
                 geometry = display.get_monitor(i).get_geometry()
@@ -185,8 +186,7 @@ class Terminalle:
                 mid_on = mid[axis]
                 mid_off = mid[1 - axis]
                 gain = (mid_on - curr_mid_on) * direction
-                if gain > 0 and (best_gain is None or gain < best_gain) \
-                        and gain > abs(mid_off - curr_mid_off):
+                if gain > 0 and gain < best_gain and gain > abs(mid_off - curr_mid_off):
                     best_gain = gain
                     best_monitor = i
             if best_monitor is not None:
