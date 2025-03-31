@@ -2,4 +2,4 @@
 from .terminalle import Terminalle
 from .settings import load as load_settings
 
-__version__ = '0.13'
+__version__ = '1.0.0'
