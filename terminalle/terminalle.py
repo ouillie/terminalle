@@ -111,10 +111,11 @@ class Terminalle:
             -1,                               # Use the default timeout.
             None,                             # Gio Cancellable; not supported on legacy KDE
             self._term_spawn_async_callback,  # Callback after spawn complete.
-            None)                             # User data passed to callback.
+            (),                               # User data passed to callback.
+        )
         Gtk.main()
 
-    def _term_spawn_async_callback(self, terminal, pid, error, user_data):
+    def _term_spawn_async_callback(self, terminal, pid, error):
         if error is not None:
             self.window.close()
             Gtk.main_quit()
@@ -167,7 +168,7 @@ class Terminalle:
     def move(self, axis: int, direction: int):
         """ Move the window to the closest adjacent monitor in a particular direction.
 
-        `axis` must be either `0` (x-axis) or `1` (y-axis).
+        `axis` must be either `0` (left / right) or `1` (up / down).
         `direction` must be either `1` (right / down) or `-1` (left / up).
         """
         if self.window.is_active():
