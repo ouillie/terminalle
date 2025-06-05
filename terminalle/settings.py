@@ -17,24 +17,25 @@ _defaults = {
     # default: 'Source Code Pro 13'
     'font': 'Source Code Pro 13',
     # (colors: array) must have length either 8, 16, 232, or 256:
-      # first 8 are the main colors
-      # next 8 are the bright colors
-      # next 216 are the 6x6x6 color cube
-      # next 24 are grayscale
+    # - first 8 are the main colors
+    # - next 8 are the bright colors
+    # - next 216 are the 6x6x6 color cube
+    # - next 24 are grayscale
     # each color is either:
-      # a valid string for Gdk.RGBA().parse()
-      # a list of 1 (R=G=B, A=1), 3 (A=1), or 4 number values,
+    # - a valid string for Gdk.RGBA().parse()
+    # - a list of 1 (R=G=B, A=1), 3 (A=1), or 4 number values
     # each number being either:
-      # an integer between 0 and 255
-      # a float between 0.0 and 1.0
+    # - an integer between 0 and 255
+    # - a float between 0.0 and 1.0
     # default: solarized dark with pure black background
+    # and brighter high-intensity black
     'colors': [
         # black red green yellow
         '#000000', '#dc322f', '#859900', '#b58900',
         # blue magenta cyan white
         '#268bd2', '#d33682', '#2aa198', '#eee8d5',
         # high-intensity
-        '#002b36', '#cb4b16', '#586e75', '#657b83',
+        '#4e4e61', '#cb4b16', '#586e75', '#657b83',
         '#839496', '#6c71c4', '#93a1a1', '#fdf6e3',
     ],
     # (opacity: number) window opacity beween 0.0 and 1.0 or 0 and 100
