@@ -1,7 +1,7 @@
-Note: This currently only works with Wayland-based desktop environments.
+# Terminalle
 
 A modern, minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
-for [freedesktop.org][1]-compatible desktops (e.g. GNOME, KDE).
+for [freedesktop.org][1]-compatible desktops (e.g. GNOME, Unity, KDE).
 
 It omits many features common in other terminal emulators, such as tabs,
 because it's meant to be used in conjunction with a terminal multiplexer such as [tmux][2],
@@ -74,10 +74,11 @@ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/or
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>Return"
 ```
 
+`gsettings` also works with Unity.
+KDE can [configure shortcuts][7] to call D-Bus methods directly.
+
 If you use multiple monitors,
 consider hooking up shortcuts for the aforementioned movement methods as well.
-
-[KDE can][7] configure shortcuts to call D-Bus methods directly.
 
 ## Configuration
 
@@ -156,7 +157,7 @@ which provides shortened bindings for switching seemlessly between tmux panes an
 [4]: https://wiki.gnome.org/Apps/Terminal/VTE
 [5]: https://www.freedesktop.org/wiki/Software/dbus
 [6]: #shortcuts
-[7]: https://docs.kde.org/trunk5/en/khotkeys/kcontrol/khotkeys/khotkeys.pdf
+[7]: https://docs.kde.org/stable5/en/khotkeys/kcontrol/khotkeys/khotkeys.pdf
 [8]: terminalle.yaml
 [9]: terminalle/settings.py
 [10]: #configuration
