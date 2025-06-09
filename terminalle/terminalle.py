@@ -1,12 +1,11 @@
-
 from os import system
 from functools import partial
 from math import inf
 from typing import Callable, Dict, Tuple
 
 import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('Vte', '2.91')
+gi.require_version('Gtk', '4.0')
+gi.require_version('Vte', '3.91')
 from gi.repository import Gtk, Gdk, GLib, Gio, GObject, Vte
 
 SERVICE_NAME = 'party.will.Terminalle'
@@ -33,13 +32,13 @@ _default_tmux_commands = [
     ('exclam', 'break-pane'),
     ('quotedbl', 'split-window'),
     ('numbersign', 'list-buffers'),
-    ('dollar', 'command-prompt -I "#S" "rename-session -- '"'"'%%'"'"'"'),
+    ('dollar', 'command-prompt -I "#S" "rename-session -- \'%%\'"'),
     ('percent', 'split-window -h'),
     ('ampersand', 'confirm-before -p "kill-window #W? (y/n)" kill-window'),
-    ('apostrophe', 'command-prompt -T window-target -p "index" "select-window -t '"'"':%%'"'"'"'),
+    ('apostrophe', 'command-prompt -T window-target -p "index" "select-window -t \':%%\'"'),
     ('parenleft', 'switch-client -p'),
     ('parenright', 'switch-client -n'),
-    ('comma', 'command-prompt -I "#W" "rename-window -- '"'"'%%'"'"'"'),
+    ('comma', 'command-prompt -I "#W" "rename-window -- \'%%\'"'),
     # ('minus', 'delete-buffer'),
     # ('period', 'command-prompt -T target "move-window -t '"'"'%%'"'"'"'),
     ('colon', 'command-prompt'),
@@ -56,7 +55,18 @@ class Terminalle:
 
     def __init__(self, settings: Dict[str, object], show: bool):
         """ Initialize the window and VTE widget. """
-        window = Gtk.Window()
+        self.app = Gtk.Application(application_id=SERVICE_NAME)
+        self.app.connect('activate', self._on_activate)
+        self.settings = settings
+        self.show_on_startup = show
+
+    def run(self):
+        """ Start the application and enter the GTK main loop. """
+        self.app.run(None)
+
+    def _on_activate(self, app):
+        """ Create and show the main window. """
+        window = Gtk.ApplicationWindow(application=app)
         window.set_title('Terminalle')
         # Maximize the window because fullscreen does not support transparency.
         # https://gitlab.freedesktop.org/wayland/wayland-protocols/-/issues/116
@@ -69,62 +79,68 @@ class Terminalle:
         # For some reason the top-level window opacity must not be 1
         # in order to enable any kind of child widget transparency.
         window.set_opacity(.99)
-        if settings['autohide']:
-            window.set_events(Gdk.EventType.FOCUS_CHANGE)
+        if self.settings['autohide']:
             window.connect('focus-out-event', self._autohide)
 
         terminal = Vte.Terminal()
-        terminal.set_font(font_desc=settings['font'])
+        terminal.set_font(font_desc=self.settings['font'])
         terminal.set_allow_bold(True)
         terminal.set_allow_hyperlink(True)
-        bg = settings['colors'][0].copy()
-        bg.alpha = settings['opacity']
-        terminal.set_colors(background=bg, palette=settings['colors'])
+        bg = self.settings['colors'][0].copy()
+        bg.alpha = self.settings['opacity']
+        terminal.set_colors(background=bg, palette=self.settings['colors'])
         terminal.connect('child-exited', self._term_exited)
-        window.add(terminal)
-
-        accel_group = Gtk.AccelGroup()
-        # Ctrl+Shift+(C|V) to use the clipboard.
-        _init_ctrl_shift_handler('c', window, accel_group, self._copy_clipboard)
-        _init_ctrl_shift_handler('v', window, accel_group, self._paste_clipboard)
-        if settings['tmux']:
-            # Hardwire shortcuts that are generally impossible to configure in `.tmux.conf`.
-            for key_name, cmd in _default_tmux_commands:
-                _init_ctrl_handler(key_name, window, accel_group, _tmux_cmd(cmd))
-        window.add_accel_group(accel_group)
+        window.set_child(terminal)
 
         self.window = window
         self.terminal = terminal
-        self.settings = settings
-        self.show_on_startup = show
 
-    def run(self):
-        """ Open the TTY and enter the GTK main loop. """
-        self.terminal.spawn_async(
+        # Ctrl+Shift+(C|V) to use the clipboard.
+        self._init_ctrl_shift_handler('c', self._copy_clipboard)
+        self._init_ctrl_shift_handler('v', self._paste_clipboard)
+        if self.settings['tmux']:
+            # Hardwire shortcuts that are generally impossible to configure in `.tmux.conf`.
+            for key_name, cmd in _default_tmux_commands:
+                self._init_ctrl_handler(key_name, _tmux_cmd(cmd))
+
+        terminal.spawn_async(
             Vte.PtyFlags.DEFAULT,
             self.settings['home'],            # Initial working directory.
             [self.settings['shell']],         # argv
             None,                             # Initial environment variables.
             GLib.SpawnFlags.DEFAULT,
             None,                             # Callback for child setup.
-            None,                             # User data passed to callback.
+            (),                               # User arguments passed to callback.
             -1,                               # Use the default timeout.
-            None,                             # Gio Cancellable; not supported on legacy KDE
+            None,                             # Gio Cancellable
             self._term_spawn_async_callback,  # Callback after spawn complete.
-            (),                               # User data passed to callback.
+            (),                               # User arguments passed to callback.
         )
-        Gtk.main()
+
+    def _init_ctrl_handler(self, key_name: str, handler: Callable):
+        """ Set up a Ctrl+key shortcut. """
+        shortcut = Gtk.Shortcut(
+            trigger=Gtk.ShortcutTrigger.parse_string(f"<Control>{key_name}"),
+            action=Gtk.SignalAction(signal="activate")
+        )
+        self.window.add_shortcut(shortcut)
+        self.window.connect('activate', handler)
+
+    def _init_ctrl_shift_handler(self, key_name: str, handler: Callable):
+        """ Set up a Ctrl+Shift+<key> shortcut. """
+        shortcut = Gtk.Shortcut(
+            trigger=Gtk.ShortcutTrigger.parse_string(f"<Control><Shift>{key_name}"),
+            action=Gtk.SignalAction(signal="activate")
+        )
+        self.window.add_shortcut(shortcut)
+        self.window.connect('activate', handler)
 
     def _term_spawn_async_callback(self, terminal, pid, error):
         if error is not None:
-            self.window.close()
-            Gtk.main_quit()
+            self.quit()
             raise RuntimeError(f'Error spawning VTE [{error.domain}:{error.code}]: {error.message}')
         if self.show_on_startup:
-            self.window.show_all()
-        else:
-            # Only show the child widgets, waiting for the toggle signal to show the window.
-            self.terminal.show_all()
+            window.present()
         Gio.bus_own_name(Gio.BusType.SESSION,
                          SERVICE_NAME,
                          Gio.BusNameOwnerFlags.DO_NOT_QUEUE,
@@ -162,7 +178,7 @@ class Terminalle:
             self.window.hide()
         else:
             if not self.window.props.visible:
-                self.window.show()
+                self.window.present()
             self.window.grab_focus()
 
     def move(self, axis: int, direction: int):
@@ -172,8 +188,8 @@ class Terminalle:
         `direction` must be either `1` (right / down) or `-1` (left / up).
         """
         if self.window.is_active():
-            display = self.window.get_display()
-            curr_geometry = display.get_monitor_at_window(self.window.get_window()).get_geometry()
+            display = Gdk.Display.get_default()
+            curr_geometry = display.get_monitor_at_surface(self.window.get_surface()).get_geometry()
             mid = (curr_geometry.x + 0.5 * curr_geometry.width,
                    curr_geometry.y + 0.5 * curr_geometry.height)
             curr_mid_on = mid[axis]
@@ -181,7 +197,8 @@ class Terminalle:
             best_gain = inf
             best_monitor = None
             for i in range(display.get_n_monitors()):
-                geometry = display.get_monitor(i).get_geometry()
+                monitor = display.get_monitor(i)
+                geometry = monitor.get_geometry()
                 mid = (geometry.x + 0.5 * geometry.width,
                        geometry.y + 0.5 * geometry.height)
                 mid_on = mid[axis]
@@ -189,9 +206,9 @@ class Terminalle:
                 gain = (mid_on - curr_mid_on) * direction
                 if gain > 0 and gain < best_gain and gain > abs(mid_off - curr_mid_off):
                     best_gain = gain
-                    best_monitor = i
+                    best_monitor = monitor
             if best_monitor is not None:
-                self.window.fullscreen_on_monitor(display.get_default_screen(), best_monitor)
+                self.window.fullscreen_on_monitor(best_monitor)
                 self.window.grab_focus()
 
     def _copy_clipboard(self, window: Gtk.Window):
@@ -208,35 +225,8 @@ class Terminalle:
 
     def quit(self):
         """ Close the window and exit the GTK main loop. """
-        GLib.idle_add(self._quit)
-
-    def _quit(self):
         self.window.close()
-        GLib.idle_add(Gtk.main_quit)
-
-def _init_ctrl_handler(key_name: str, *args):
-    return _init_handler('ctrl-' + key_name,
-                         Gdk.ModifierType.CONTROL_MASK,
-                         key_name, *args)
-
-def _init_ctrl_shift_handler(key_name: str, *args):
-    return _init_handler('ctrl-shift-' + key_name,
-                         Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK,
-                         key_name, *args)
-
-def _init_handler(signal_name: str,
-                  mod_mask: Gdk.ModifierType,
-                  key_name: str,
-                  window: Gtk.Window,
-                  accel_group: Gtk.AccelGroup,
-                  handler: Callable):
-    GObject.signal_new(signal_name, Gtk.Window,
-                       GObject.SignalFlags.RUN_LAST | GObject.SignalFlags.ACTION,
-                       None, ())
-    window.connect(signal_name, handler)
-    window.add_accelerator(signal_name, accel_group,
-                           Gdk.keyval_from_name(key_name), mod_mask,
-                           Gtk.AccelFlags.LOCKED)
+        GLib.idle_add(self.app.quit)
 
 def _tmux_cmd(cmd: str):
     def _handler(window: Gtk.Window):
