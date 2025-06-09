@@ -1,3 +1,40 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "terminalle"
+description = "A fancy drop-down terminal emulateur."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+  {name = "Will", email = "author@will.party"},
+]
+keywords = ["terminal", "emulator", "drop-down", "freedesktop", "gdk", "gtk", "gnome", "vte", "console", "sick"]
+classifiers = [
+  "Intended Audience :: End Users/Desktop",
+  "Topic :: Desktop Environment",
+  "Topic :: Terminals",
+]
+dependencies = [
+  "PyGObject>=3.50.0",
+  "PyYAML>=6.0.2",
+]
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/will/terminalle"
+
+[project.scripts]
+terminalle = "terminalle.__main__:main"
+
+[tool.setuptools]
+packages = ["terminalle"]
+package-data = {terminalle = ["terminalle.desktop", "party.will.Terminalle.service"]}
+
+[tool.setuptools.dynamic]
+version = {attr = "terminalle.__version__"}
+
+[tool.setuptools.data-files]
+"share/man/man1" = ["terminalle.1"]

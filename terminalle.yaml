@@ -1,4 +1,6 @@
-# This is just an example configuation. Values are not necessarily the default.
+# This is an example configuation file.
+# Terminalle will look for it in `$XDG_CONFIG_HOME` (probably `~/.config`).
+# Values are not necessarily defaults.
 # See the defaults in `terminalle/settings.py`.
 shell: '/bin/sh'
 home: '/home/user'
