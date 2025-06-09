@@ -1,7 +1,7 @@
-from os import system
+from os import system, waitstatus_to_exitcode
 from functools import partial
 from math import inf
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict, Tuple, Optional
 
 import gi
 gi.require_version('Gtk', '4.0')
@@ -26,8 +26,8 @@ SERVICE_XML = f'''
 </node>
 '''
 
-# https://github.com/tmux/tmux/blob/28b6237c623f507188a782a016563c78dd0ffb85/key-bindings.c#L344
-# https://cgit.freedesktop.org/xorg/proto/x11proto/plain/keysymdef.h
+# key names: https://cgit.freedesktop.org/xorg/proto/x11proto/plain/keysymdef.h
+# tmux keybinding commands: https://github.com/tmux/tmux/blob/3.5a/key-bindings.c#L347
 _default_tmux_commands = [
     ('exclam', 'break-pane'),
     ('quotedbl', 'split-window'),
@@ -60,27 +60,22 @@ class Terminalle:
         self.settings = settings
         self.show_on_startup = show
 
-    def run(self):
-        """ Start the application and enter the GTK main loop. """
-        self.app.run(None)
-
-    def _on_activate(self, app):
+    def _on_activate(self, app: Gtk.Application):
         """ Create and show the main window. """
         window = Gtk.ApplicationWindow(application=app)
         window.set_title('Terminalle')
+        window.set_icon_name('utilities-terminal')
+        window.set_decorated(False)
         # Maximize the window because fullscreen does not support transparency.
         # https://gitlab.freedesktop.org/wayland/wayland-protocols/-/issues/116
         window.maximize()
-        window.set_keep_above(True)
-        window.set_skip_taskbar_hint(True)
-        window.set_skip_pager_hint(True)
-        window.set_decorated(False)
-        window.set_type_hint(Gdk.WindowTypeHint.DOCK)
         # For some reason the top-level window opacity must not be 1
         # in order to enable any kind of child widget transparency.
         window.set_opacity(.99)
         if self.settings['autohide']:
-            window.connect('focus-out-event', self._autohide)
+            focus_controller = Gtk.EventControllerFocus()
+            focus_controller.connect('leave', self._autohide)
+            window.add_controller(focus_controller)
 
         terminal = Vte.Terminal()
         terminal.set_font(font_desc=self.settings['font'])
@@ -117,38 +112,41 @@ class Terminalle:
             (),                               # User arguments passed to callback.
         )
 
-    def _init_ctrl_handler(self, key_name: str, handler: Callable):
+    def _init_ctrl_handler(self, key_name: str, handler: Callable[[Gtk.Widget, Optional[GLib.Variant], object], bool]):
         """ Set up a Ctrl+key shortcut. """
-        shortcut = Gtk.Shortcut(
-            trigger=Gtk.ShortcutTrigger.parse_string(f"<Control>{key_name}"),
-            action=Gtk.SignalAction(signal="activate")
-        )
-        self.window.add_shortcut(shortcut)
-        self.window.connect('activate', handler)
+        self._init_handler(f"<Control>{key_name}", handler)
 
-    def _init_ctrl_shift_handler(self, key_name: str, handler: Callable):
+    def _init_ctrl_shift_handler(self, key_name: str, handler: Callable[[Gtk.Widget, Optional[GLib.Variant], object], bool]):
         """ Set up a Ctrl+Shift+<key> shortcut. """
-        shortcut = Gtk.Shortcut(
-            trigger=Gtk.ShortcutTrigger.parse_string(f"<Control><Shift>{key_name}"),
-            action=Gtk.SignalAction(signal="activate")
-        )
-        self.window.add_shortcut(shortcut)
-        self.window.connect('activate', handler)
+        self._init_handler(f"<Control><Shift>{key_name}", handler)
 
-    def _term_spawn_async_callback(self, terminal, pid, error):
+    def _init_handler(self, trigger: str, handler: Callable[[Gtk.Widget, Optional[GLib.Variant], object], bool]):
+        """ Set up a keyboard shortcut. """
+        self.window.add_shortcut(
+            Gtk.Shortcut.new(
+                Gtk.ShortcutTrigger.parse_string(trigger),
+                Gtk.CallbackAction.new(handler),
+            )
+        )
+
+    def _term_spawn_async_callback(self, terminal: Vte.Terminal, pid: int, error: Optional[GLib.Error]):
+        """ Finish starting up after the terminal has been spawned. """
         if error is not None:
             self.quit()
             raise RuntimeError(f'Error spawning VTE [{error.domain}:{error.code}]: {error.message}')
         if self.show_on_startup:
-            window.present()
-        Gio.bus_own_name(Gio.BusType.SESSION,
-                         SERVICE_NAME,
-                         Gio.BusNameOwnerFlags.DO_NOT_QUEUE,
-                         None,
-                         self._on_name_acquired,
-                         self._on_name_lost)
+            self.window.present()
+        Gio.bus_own_name(
+            bus_type=Gio.BusType.SESSION,
+            name=SERVICE_NAME,
+            flags=Gio.BusNameOwnerFlags.DO_NOT_QUEUE,
+            bus_acquired_closure=None,
+            name_acquired_closure=self._on_name_acquired,
+            name_lost_closure=self._on_name_lost,
+        )
 
-    def _on_name_acquired(self, connection: Gio.DBusConnection, name: str) -> None:
+    def _on_name_acquired(self, connection: Gio.DBusConnection, name: str):
+        """ Set up D-Bus methods when the service name is acquired. """
         self.methods = {'Toggle': self.toggle,
                         'MoveRight': partial(self.move, 0, 1),
                         'MoveLeft': partial(self.move, 0, -1),
@@ -158,16 +156,22 @@ class Terminalle:
         service = Gio.DBusNodeInfo.new_for_xml(SERVICE_XML)
         connection.register_object(OBJECT_PATH, service.interfaces[0], self._on_method_call)
 
-    def _on_name_lost(self, connection: Gio.DBusConnection, name: str) -> None:
+    def _on_name_lost(self, connection: Gio.DBusConnection, name: str):
+        """ Handle D-Bus service name collision. """
         self.quit()
-        raise RuntimeError(f'Interface \'{name}\' already in use.')
+        raise RuntimeError(f'D-Bus interface \'{name}\' already in use.')
 
     def _on_method_call(self, connection: Gio.DBusConnection,
                         sender: str, object_path: str, interface_name: str,
                         method_name: str, parameters: Tuple,
-                        invocation: Gio.DBusMethodInvocation) -> None:
+                        invocation: Gio.DBusMethodInvocation):
+        """ Handle a D-Bus method invocation. """
         self.methods[method_name]()
         invocation.return_value()
+
+    def run(self):
+        """ Start the application and enter the GTK main loop. """
+        self.app.run(None)
 
     def toggle(self):
         """ Toggle window visibility. """
@@ -182,7 +186,8 @@ class Terminalle:
             self.window.grab_focus()
 
     def move(self, axis: int, direction: int):
-        """ Move the window to the closest adjacent monitor in a particular direction.
+        """
+        Move the window to the closest adjacent monitor in a particular direction.
 
         `axis` must be either `0` (left / right) or `1` (up / down).
         `direction` must be either `1` (right / down) or `-1` (left / up).
@@ -211,16 +216,20 @@ class Terminalle:
                 self.window.fullscreen_on_monitor(best_monitor)
                 self.window.grab_focus()
 
-    def _copy_clipboard(self, window: Gtk.Window):
+    def _copy_clipboard(self, widget: Gtk.Widget, args: Optional[GLib.Variant], user_data: object) -> bool:
         self.terminal.copy_clipboard_format(Vte.Format.TEXT)
+        return True
 
-    def _paste_clipboard(self, window: Gtk.Window):
+    def _paste_clipboard(self, widget: Gtk.Widget, args: Optional[GLib.Variant], user_data: object) -> bool:
         self.terminal.paste_clipboard()
+        return True
 
-    def _autohide(self, window: Gtk.Window, event: Gdk.EventFocus):
+    def _autohide(self, controller: Gtk.EventControllerFocus):
+        """ Hide the window when it loses focus. """
         GLib.idle_add(self.window.hide)
 
     def _term_exited(self, terminal: Vte.Terminal, status: int):
+        """ Close the window automatically when the terminal exits. """
         self.quit()
 
     def quit(self):
@@ -228,7 +237,7 @@ class Terminalle:
         self.window.close()
         GLib.idle_add(self.app.quit)
 
-def _tmux_cmd(cmd: str):
-    def _handler(window: Gtk.Window):
-        system(f'tmux {cmd}')
+def _tmux_cmd(cmd: str) -> Callable[[Gtk.Widget, Optional[GLib.Variant], object], bool]:
+    def _handler(widget: Gtk.Widget, args: Optional[GLib.Variant], user_data: object) -> bool:
+        return waitstatus_to_exitcode(system(f'tmux {cmd}')) == 0
     return _handler
