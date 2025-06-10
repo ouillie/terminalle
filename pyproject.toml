@@ -9,7 +9,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT-0"
 authors = [
-  {name = "Will", email = "author@will.party"},
+  {name = "Will Noble", email = "author@will.party"},
 ]
 keywords = ["terminal", "emulator", "drop-down", "freedesktop", "gdk", "gtk", "gnome", "vte", "console", "sick"]
 classifiers = [
