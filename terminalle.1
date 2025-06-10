@@ -24,10 +24,10 @@ load config settings from PATH
 show the window immediately on startup
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-print help message and exit
+show a help message and exit
 .TP
 \fB\-v\fR, \fB\-\-version\fR
-print program's version number and exit
+show program's version number and exit
 
 .SH COMMANDS
 .TP
@@ -38,8 +38,16 @@ Install an XDG desktop file to auto\-start Terminalle (in hidden mode) on login,
 \fBterminalle\fR \fI\,no-auto\/\fR [-h] [-u|-s] [-f]
 
 Remove the DBUS service file and XDG desktop file that were installed using the \fIauto\fR subcommand.
+.TP
+\fBterminalle\fR \fI\,key\/\fR [-h] [-t KEYS ...] [-q KEYS ...] [--gsettings | --kwriteconfig]
 
-.SH COMMAND OPTIONS 'auto'
+Set up keyboard shortcut(s) to invoke actions (Toggle or Quit). Supports GNOME-based desktops (including Unity, Cinnamon, etc.), or KDE. The running desktop environment is autodetected by default.
+.TP
+\fBterminalle\fR \fI\,no-key\/\fR [-h] [--gsettings | --kwriteconfig]
+
+Remove any keyboard shortcut(s) to invoke actions (Toggle or Quit).
+
+.SH COMMAND OPTIONS 'auto' / 'no-auto'
 .TP
 \fB\-u\fR, \fB\-\-user\fR
 apply to the current user only - this is the default
@@ -57,21 +65,24 @@ do \fBnot\fR install XDG desktop file
 do \fBnot\fR install DBUS service file
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-print help message and exit
+show a help message and exit
 
-.SH COMMAND OPTIONS 'no-auto'
+.SH COMMAND OPTIONS 'key' / 'no-key'
 .TP
-\fB\-u\fR, \fB\-\-user\fR
-apply to the current user only - this is the default
+\fB\-t\fR, \fB\-\-toggle=\fRKEYS
+shortcut to toggle window visibility
 .TP
-\fB\-s\fR, \fB\-\-system\fR
-apply to all users on the system
+\fB\-q\fR, \fB\-\-quit=\fRKEYS
+shortcut to shut down the application
 .TP
-\fB\-f\fR, \fB\-\-force\fR
-delete files even if the contents are unexpected
+\fB\-\-gsettings\fR
+assume the desktop environment is GNOME-based
+.TP
+\fB\-\-kwriteconfig\fR
+assume the desktop environment is KDE
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-print help message and exit
+show a help message and exit
 
 .SH AUTHORS
 Will Noble
@@ -85,7 +96,7 @@ Documentation:
 .PD 0
 .LP
 Source:
-.UR https://github.com/wm\-noble/terminalle
+.UR https://github.com/ouillie/terminalle
 .UE
 .LP
 Python Package Index:

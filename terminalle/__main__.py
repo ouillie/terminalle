@@ -100,18 +100,6 @@ def build_argparse() -> ArgumentParser:
         help='do *not* install DBUS service file',
     )
 
-    for sub_parser in [key_parser, no_key_parser]:
-        desktop = sub_parser.add_mutually_exclusive_group()
-        desktop.add_argument(
-            '--gsettings',
-            action='store_true',
-            help='assume the desktop is GNOME-based',
-        )
-        desktop.add_argument(
-            '--kwriteconfig',
-            action='store_true',
-            help='assume the desktop environment is KDE',
-        )
     key_parser.add_argument(
         '-t',
         '--toggle',
@@ -126,6 +114,18 @@ def build_argparse() -> ArgumentParser:
         metavar='KEYS',
         help='shortcut to shut down the application',
     )
+    for sub_parser in [key_parser, no_key_parser]:
+        desktop = sub_parser.add_mutually_exclusive_group()
+        desktop.add_argument(
+            '--gsettings',
+            action='store_true',
+            help='assume the desktop environment is GNOME-based',
+        )
+        desktop.add_argument(
+            '--kwriteconfig',
+            action='store_true',
+            help='assume the desktop environment is KDE',
+        )
 
     return parser
 
