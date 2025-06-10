@@ -17,9 +17,20 @@ classifiers = [
   "Topic :: Desktop Environment",
   "Topic :: Terminals",
 ]
+# Try to support system-packaged dependencies
+# on Ubuntu, Debian, Fedora, Arch.
+# Debian is usually the oldest.
 dependencies = [
-  "PyGObject>=3.50.0",
-  "PyYAML>=6.0.2",
+  # https://packages.ubuntu.com/noble/python3-gi
+  # https://packages.debian.org/bookworm/python3-gi
+  # https://packages.fedoraproject.org/pkgs/pygobject3/python3-gobject/
+  # https://archlinux.org/packages/extra/x86_64/python-gobject/
+  "PyGObject>=3.42.2",
+  # https://packages.ubuntu.com/noble/python3-yaml
+  # https://packages.debian.org/bookworm/python3-yaml
+  # https://packages.fedoraproject.org/pkgs/PyYAML/python3-pyyaml/
+  # https://archlinux.org/packages/extra/x86_64/python-yaml/
+  "PyYAML>=6.0",
 ]
 dynamic = ["version"]
 
