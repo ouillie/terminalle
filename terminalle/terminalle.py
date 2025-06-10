@@ -1,3 +1,5 @@
+"""Terminalle application logic."""
+
 from subprocess import Popen
 from typing import Callable, Dict, Tuple, Optional
 
@@ -45,17 +47,17 @@ _tmux_mode_commands = [
 ]
 
 class Terminalle:
-    """ Manages the D-Bus service and the terminal window. """
+    """Manages the D-Bus service and the terminal window."""
 
     def __init__(self, settings: Dict[str, object], show: bool):
-        """ Initialize the window and VTE widget. """
+        """Initialize the window and VTE widget."""
         self.app = Gtk.Application(application_id=SERVICE_NAME)
         self.app.connect('activate', self._on_activate)
         self.settings = settings
         self.show_on_startup = show
 
     def _on_activate(self, app: Gtk.Application):
-        """ Create and show the main window. """
+        """Create and show the main window."""
         window = Gtk.ApplicationWindow(application=app)
         window.set_title('Terminalle')
         window.set_icon_name('utilities-terminal')
@@ -90,34 +92,37 @@ class Terminalle:
         self.terminal = terminal
 
         terminal.spawn_async(
-            Vte.PtyFlags.DEFAULT,
-            self.settings['home'],            # Initial working directory.
-            [self.settings['shell']],         # argv
-            None,                             # Initial environment variables.
-            GLib.SpawnFlags.DEFAULT,
-            None,                             # Callback for child setup.
-            (),                               # User arguments passed to callback.
-            -1,                               # Use the default timeout.
-            None,                             # Gio Cancellable
-            self._term_spawn_async_callback,  # Callback after spawn complete.
-            (),                               # User arguments passed to callback.
+            pty_flags=Vte.PtyFlags.DEFAULT,
+            working_directory=self.settings['home'],
+            argv=[self.settings['shell']],
+            envv=None,
+            spawn_flags=GLib.SpawnFlags.DEFAULT,
+            child_setup=None,
+            #child_setup_data=(),
+            timeout=-1,
+            cancellable=None,
+            callback=self._term_spawn_async_callback,
         )
 
         # Set up keyboard shortcuts.
         shortcut_controller = Gtk.ShortcutController()
         shortcut_controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
-        _add_shortcut(shortcut_controller, "<Control><Shift>c", self._copy_clipboard)
-        _add_shortcut(shortcut_controller, "<Control><Shift>v", self._paste_clipboard)
+        _add_shortcut(shortcut_controller, '<Control><Shift>c', self._copy_clipboard)
+        _add_shortcut(shortcut_controller, '<Control><Shift>v', self._paste_clipboard)
         if self.settings['tmux']:
             for key_name, cmd in _tmux_mode_commands:
-                _add_shortcut(shortcut_controller, f"<Control>{key_name}", _run_cmd_handler(cmd))
+                _add_shortcut(shortcut_controller, f'<Control>{key_name}', _run_cmd_handler(cmd))
         window.add_controller(shortcut_controller)
 
-    def _term_spawn_async_callback(self, terminal: Vte.Terminal, pid: int, error: Optional[GLib.Error]):
-        """ Finish starting up after the terminal has been spawned. """
+    def _term_spawn_async_callback(
+        self, terminal: Vte.Terminal, pid: int, error: Optional[GLib.Error]
+    ):
+        """Finish starting up after the terminal has been spawned."""
         if error is not None:
             self.quit()
-            raise RuntimeError(f'Error spawning VTE [{error.domain}:{error.code}]: {error.message}')
+            raise RuntimeError(
+                f'Error spawning VTE [{error.domain}:{error.code}]: {error.message}'
+            )
         if self.show_on_startup:
             self.window.present()
             self.window.grab_focus()
@@ -127,22 +132,30 @@ class Terminalle:
             'Quit': self.quit,
         }
         service = Gio.DBusNodeInfo.new_for_xml(SERVICE_XML)
-        self.app.get_dbus_connection().register_object(OBJECT_PATH, service.interfaces[0], self._on_method_call)
+        self.app.get_dbus_connection().register_object(
+            OBJECT_PATH, service.interfaces[0], self._on_method_call
+        )
 
-    def _on_method_call(self, connection: Gio.DBusConnection,
-                        sender: str, object_path: str, interface_name: str,
-                        method_name: str, parameters: Tuple,
-                        invocation: Gio.DBusMethodInvocation):
-        """ Handle a D-Bus method invocation. """
+    def _on_method_call(
+        self,
+        connection: Gio.DBusConnection,
+        sender: str,
+        object_path: str,
+        interface_name: str,
+        method_name: str,
+        parameters: Tuple,
+        invocation: Gio.DBusMethodInvocation,
+    ):
+        """Handle a D-Bus method invocation."""
         self.methods[method_name]()
         invocation.return_value()
 
     def run(self):
-        """ Run the GTK application. """
+        """Run the GTK application."""
         self.app.run(None)
 
     def toggle(self):
-        """ Toggle window visibility. """
+        """Toggle window visibility."""
         GLib.idle_add(self._toggle)
 
     def _toggle(self):
@@ -162,19 +175,23 @@ class Terminalle:
         return True
 
     def _autohide(self, controller: Gtk.EventControllerFocus):
-        """ Hide the window when it loses focus. """
+        """Hide the window when it loses focus."""
         GLib.idle_add(self.window.hide)
 
     def _term_exited(self, terminal: Vte.Terminal, status: int):
-        """ Close the window automatically when the terminal exits. """
+        """Close the window automatically when the terminal exits."""
         self.quit()
 
     def quit(self):
-        """ Quit the GTK application. """
+        """Quit the GTK application."""
         GLib.idle_add(self.app.quit)
 
-def _add_shortcut(controller: Gtk.ShortcutController, trigger: str, handler: Callable[[Gtk.Widget, Optional[GLib.Variant], object], bool]):
-    """ Set up a keyboard shortcut. """
+def _add_shortcut(
+    controller: Gtk.ShortcutController,
+    trigger: str,
+    handler: Callable[[Gtk.Widget, Optional[GLib.Variant], object], bool],
+):
+    """Set up a keyboard shortcut."""
     controller.add_shortcut(
         Gtk.Shortcut.new(
             Gtk.ShortcutTrigger.parse_string(trigger),

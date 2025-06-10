@@ -1,4 +1,4 @@
-""" Command-line tools to install and remove autostart-related files. """
+"""Command-line tools to install and remove autostart-related files."""
 
 from os import getenv, makedirs, readlink, symlink, unlink
 from os.path import abspath, join as join_path, sep as path_sep, dirname, isfile, islink
@@ -26,12 +26,14 @@ def _get_dests_and_srcs(system: bool):
     else:
         xdg_config_dirs = [xdg_config_home_path]
         xdg_data_dirs = [xdg_data_home_path]
-    return ([join_path(config_dir, 'autostart', desktop_filename)
-             for config_dir in xdg_config_dirs],
-            resource_filename(__name__, desktop_filename),
-            [join_path(data_dir, 'dbus-1', 'services', service_filename)
-             for data_dir in xdg_data_dirs],
-            resource_filename(__name__, service_filename))
+    return (
+        [join_path(config_dir, 'autostart', desktop_filename)
+         for config_dir in xdg_config_dirs],
+        resource_filename(__name__, desktop_filename),
+        [join_path(data_dir, 'dbus-1', 'services', service_filename)
+         for data_dir in xdg_data_dirs],
+        resource_filename(__name__, service_filename),
+    )
 
 def auto(system: bool, force: bool, start_on_login: bool, restart_if_closed: bool):
     desktop_dests, desktop_src, service_dests, service_src =  _get_dests_and_srcs(system)
@@ -43,28 +45,40 @@ def auto(system: bool, force: bool, start_on_login: bool, restart_if_closed: boo
             if islink(dest):
                 existing_src = readlink(dest)
                 if existing_src == src:
-                    print(f'Symlink already exists: {dest}\n'
-                          f'                      → {src}', file=stderr)
+                    print(
+                        f'Symlink already exists: {dest}\n'
+                        f'                      → {src}',
+                        file=stderr,
+                    )
                     continue
                 elif force:
                     unlink(dest)
                 else:
-                    print(f'Unexpected symlink: {dest}\n'
-                          f'                  → {existing_src}\n'
-                          '(use `--force` to overwrite it)', file=stderr)
+                    print(
+                        f'Unexpected symlink: {dest}\n'
+                        f'                  → {existing_src}\n'
+                        '(use `--force` to overwrite it)',
+                        file=stderr,
+                    )
                     continue
             elif isfile(dest):
                 if force:
                     unlink(dest)
                 else:
-                    print(f'Unexpected file: {dest}\n'
-                          '(use `--force` to overwrite it)', file=stderr)
+                    print(
+                        f'Unexpected file: {dest}\n'
+                        '(use `--force` to overwrite it)',
+                        file=stderr,
+                    )
                     continue
             else:
                 makedirs(dirname(dest), mode=0o755, exist_ok=True)
             symlink(src, dest)
-            print(f'Created symlink: {dest}\n'
-                  f'               → {src}', file=stderr)
+            print(
+                f'Created symlink: {dest}\n'
+                f'               → {src}',
+                file=stderr,
+            )
 
 def no_auto(system: bool, force: bool):
     desktop_dests, desktop_src, service_dests, service_src =  _get_dests_and_srcs(system)
@@ -73,14 +87,20 @@ def no_auto(system: bool, force: bool):
             if islink(dest):
                 existing_src = readlink(dest)
                 if existing_src != src and not force:
-                    print(f'Unexpected symlink: {dest}\n'
-                          f'                  → {existing_src}\n'
-                          '(use `--force` to delete it anyway)', file=stderr)
+                    print(
+                        f'Unexpected symlink: {dest}\n'
+                        f'                  → {existing_src}\n'
+                        '(use `--force` to delete it anyway)',
+                        file=stderr,
+                    )
                     continue
             elif isfile(dest):
                 if not force:
-                    print(f'Unexpected file: {dest}\n'
-                          '(use `--force` to delete it anyway)', file=stderr)
+                    print(
+                        f'Unexpected file: {dest}\n'
+                        '(use `--force` to delete it anyway)',
+                        file=stderr,
+                    )
                     continue
             else:
                 continue
