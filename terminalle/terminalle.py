@@ -92,16 +92,17 @@ class Terminalle:
         self.terminal = terminal
 
         terminal.spawn_async(
-            pty_flags=Vte.PtyFlags.DEFAULT,
-            working_directory=self.settings['home'],
-            argv=[self.settings['shell']],
-            envv=None,
-            spawn_flags=GLib.SpawnFlags.DEFAULT,
-            child_setup=None,
-            #child_setup_data=(),
-            timeout=-1,
-            cancellable=None,
-            callback=self._term_spawn_async_callback,
+            Vte.PtyFlags.DEFAULT,             # PTY flags
+            self.settings['home'],            # working directory
+            [self.settings['shell']],         # command-line arguments
+            None,                             # environment variables
+            GLib.SpawnFlags.DEFAULT,          # spawn flags
+            None,                             # child setup callback
+            (),                               # child setup callback arguments
+            -1,                               # timeout
+            None,                             # cancellable
+            self._term_spawn_async_callback,  # spawn callback
+            (),                               # spawn callback arguments
         )
 
         # Set up keyboard shortcuts.
