@@ -1,6 +1,4 @@
 from subprocess import Popen
-from functools import partial
-from math import inf
 from typing import Callable, Dict, Tuple, Optional
 
 import gi
@@ -17,10 +15,6 @@ SERVICE_XML = f'''
 <node>
   <interface name="{SERVICE_NAME}">
     <method name="Toggle" />
-    <method name="MoveRight" />
-    <method name="MoveLeft" />
-    <method name="MoveDown" />
-    <method name="MoveUp" />
     <method name="Quit" />
   </interface>
 </node>
@@ -130,10 +124,6 @@ class Terminalle:
 
         self.methods = {
             'Toggle': self.toggle,
-            'MoveRight': partial(self.move, 0, 1),
-            'MoveLeft': partial(self.move, 0, -1),
-            'MoveDown': partial(self.move, 1, 1),
-            'MoveUp': partial(self.move, 1, -1),
             'Quit': self.quit,
         }
         service = Gio.DBusNodeInfo.new_for_xml(SERVICE_XML)
@@ -162,38 +152,6 @@ class Terminalle:
             if not self.window.props.visible:
                 self.window.present()
             self.window.grab_focus()
-
-    def move(self, axis: int, direction: int):
-        """
-        Move the window to the closest adjacent monitor in a particular direction.
-
-        `axis` must be either `0` (left / right) or `1` (up / down).
-        `direction` must be either `1` (right / down) or `-1` (left / up).
-        """
-        if self.window.is_active():
-            display = self.window.get_display()
-            curr_geometry = display.get_monitor_at_surface(self.window.get_surface()).get_geometry()
-            mid = (curr_geometry.x + 0.5 * curr_geometry.width,
-                   curr_geometry.y + 0.5 * curr_geometry.height)
-            curr_mid_on = mid[axis]
-            curr_mid_off = mid[1 - axis]
-            best_gain = inf
-            best_monitor = None
-            for monitor in display.get_monitors():
-                geometry = monitor.get_geometry()
-                mid = (geometry.x + 0.5 * geometry.width,
-                       geometry.y + 0.5 * geometry.height)
-                mid_on = mid[axis]
-                mid_off = mid[1 - axis]
-                gain = (mid_on - curr_mid_on) * direction
-                if gain > 0 and gain < best_gain and gain > abs(mid_off - curr_mid_off):
-                    best_gain = gain
-                    best_monitor = monitor
-            if best_monitor is not None:
-                self.window.fullscreen_on_monitor(best_monitor)
-                self.window.maximize()
-                self.window.unfullscreen()
-                self.window.grab_focus()
 
     def _copy_clipboard(self, widget: Gtk.Widget, args: Optional[GLib.Variant]) -> bool:
         self.terminal.copy_clipboard_format(Vte.Format.TEXT)

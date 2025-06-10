@@ -33,12 +33,9 @@ dbus-send --session --type=method_call --dest=party.will.Terminalle \
     /party/will/Terminalle party.will.Terminalle.Quit
 ```
 
-In addition to `Toggle` and `Quit`,
-there are four methods to move the terminal window between monitors:
-`MoveRight`, `MoveLeft`, `MoveDown`, and `MoveUp`,
-each of which moves the window to the next adjacent monitor in a particular direction.
-This only works while the window is open.
-See [shortcuts][6] for info on mapping keybindings to these D-Bus methods.
+The terminal will open on the monitor where the mouse is currently located.
+To move it to a different monitor, toggle it closed, move the mouse, then toggle it open again.
+Wayland does not allow applications to position their own windows.
 
 Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 
@@ -76,9 +73,6 @@ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/or
 
 `gsettings` also works with Unity.
 KDE can [configure shortcuts][7] to call D-Bus methods directly.
-
-If you use multiple monitors,
-consider hooking up shortcuts for the aforementioned movement methods as well.
 
 ## Configuration
 
