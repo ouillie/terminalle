@@ -1,6 +1,6 @@
 # Terminalle
 
-A modern, minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
+A modern, minimalist, semi-transparent, fullscreen "drop-down" terminal emulateur
 for [freedesktop.org]-compatible desktops (e.g. GNOME, Unity, KDE).
 
 It omits many features common in other terminal emulators, such as tabs,
@@ -15,10 +15,34 @@ Based on [VTE].
 [tmux mode]: #tmux-mode
 [VTE]: https://wiki.gnome.org/Apps/Terminal/VTE
 
+## Install
+
+```bash
+pip install terminalle
+
+# Optional: Enable auto-start.
+# Starts the server automatically (window hidden) on login
+# and restarts automatically on toggle if closed.
+terminalle auto
+
+# If enabled, it should be disabled prior to uninstalling.
+terminalle no-auto
+```
+
+### Shortcuts
+
+```bash
+# Enable keyboard shortcut(s) to toggle the window.
+terminalle key --toggle '<Super>Return' --toggle '<Alt>Return'
+
+# Disable any keyboard shortcuts; should be done prior to uninstalling.
+terminalle no-key
+```
+
 ## Usage
 
 Whichever process runs `terminalle` is the "server".
-Use [D-Bus] to control it.
+It's controlled via [D-Bus].
 
 ```bash
 # See usage info.
@@ -30,7 +54,7 @@ terminalle --help
 terminalle &
 
 # Toggle window visibility manually.
-# This can also be easily mapped to a keyboard shortcut.
+# This should probably be bound to a keyboard shortcut.
 dbus-send --session --type=method_call --dest=party.will.Terminalle \
     /party/will/Terminalle party.will.Terminalle.Toggle
 
@@ -39,35 +63,13 @@ dbus-send --session --type=method_call --dest=party.will.Terminalle \
     /party/will/Terminalle party.will.Terminalle.Quit
 ```
 
-The terminal will open on the monitor where the mouse is currently located.
-To move it to a different monitor, toggle it closed, move the mouse, then toggle it open again.
+When toggled on, the terminal opens on the monitor where the mouse is located.
+To move it to a different monitor, move the mouse, then toggle it on again.
 Wayland does not allow applications to position their own windows.
 
 Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 
 [D-Bus]: https://www.freedesktop.org/wiki/Software/dbus
-
-## Install
-
-```bash
-pip install terminalle
-
-# Optional: Enable auto-start.
-#           Starts the server automatically (window hidden) on login
-#           and restarts automatically on toggle if closed.
-terminalle auto
-
-# Optional: Enable keyboard shortcut(s) to toggle the window.
-terminalle key --toggle '<Super>Return' --toggle '<Alt>Return'
-
-# Optional: Disable auto-start.
-#           If enabled, it should be disabled prior to uninstalling.
-terminalle no-auto
-
-# Optional: Disable any keyboard shortcuts,
-#           which should also be done prior to uninstalling.
-terminalle no-key
-```
 
 ## Configuration
 
