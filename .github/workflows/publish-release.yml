@@ -8,9 +8,13 @@ on:
 jobs:
   pypi:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags')
+    environment:
+      name: pypi
+      url: https://pypi.org/p/terminalle
+    permissions:
+      # Mandatory for trusted publishing with `gh-action-pypi-publish`.
+      id-token: write
     steps:
-      # Checkout the repo under ${GITHUB_WORKSPACE}, so the job can access it.
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -22,8 +26,4 @@ jobs:
           python -m pip install build
           python -m build
 
-      # Use some off-the-shelf thing.
       - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
