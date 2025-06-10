@@ -1,19 +1,24 @@
 # Terminalle
 
 A modern, minimalist, semi-transparent fullscreen "drop-down" terminal emulateur
-for [freedesktop.org][1]-compatible desktops (e.g. GNOME, Unity, KDE).
+for [freedesktop.org]-compatible desktops (e.g. GNOME, Unity, KDE).
 
 It omits many features common in other terminal emulators, such as tabs,
-because it's meant to be used in conjunction with a terminal multiplexer such as [tmux][2],
+because it's meant to be used in conjunction with a terminal multiplexer such as [tmux],
 which has a solid, mature UI.
-See also [tmux mode][3] for enhanced tmux features.
+See also [tmux mode] for enhanced tmux features.
 
-Based on [VTE][4].
+Based on [VTE].
+
+[freedesktop.org]: https://freedesktop.org
+[tmux]: https://tmux.github.io
+[tmux mode]: #tmux-mode
+[VTE]: https://wiki.gnome.org/Apps/Terminal/VTE
 
 ## Usage
 
 Whichever process runs `terminalle` is the "server".
-Use [D-Bus][5] to control it.
+Use [D-Bus] to control it.
 
 ```bash
 # See usage info.
@@ -24,7 +29,8 @@ terminalle --help
 # This is unnecessary if you've enabled auto-start with `terminalle auto`.
 terminalle &
 
-# Toggle window visibility.
+# Toggle window visibility manually.
+# This can also be easily mapped to a keyboard shortcut.
 dbus-send --session --type=method_call --dest=party.will.Terminalle \
     /party/will/Terminalle party.will.Terminalle.Toggle
 
@@ -39,6 +45,8 @@ Wayland does not allow applications to position their own windows.
 
 Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 
+[D-Bus]: https://www.freedesktop.org/wiki/Software/dbus
+
 ## Install
 
 ```bash
@@ -49,36 +57,26 @@ pip install terminalle
 #           and restarts automatically on toggle if closed.
 terminalle auto
 
+# Optional: Enable keyboard shortcut(s) to toggle the window.
+terminalle key --toggle '<Super>Return' --toggle '<Alt>Return'
+
 # Optional: Disable auto-start.
 #           If enabled, it should be disabled prior to uninstalling.
 terminalle no-auto
+
+# Optional: Disable any keyboard shortcuts,
+#           which should also be done prior to uninstalling.
+terminalle no-key
 ```
-
-### Shortcuts
-
-You almost certainly want to hook up the toggle method to a keybinding for easy access.
-In GNOME, you can either do that in the GNOME Control Center (a.k.a "Settings"),
-or with `gsettings`:
-
-```bash
-# WARNING: Running this verbatim will disable any existing custom keybindings.
-#          It's an example.
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
-
-# WARNING: This will overwrite any existing custom keybinding called 'custom0'.
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "Toggle Terminalle"
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "dbus-send --session --type=method_call --dest=party.will.Terminalle /party/will/Terminalle party.will.Terminalle.Toggle"
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "<Super>Return"
-```
-
-`gsettings` also works with Unity.
-KDE can [configure shortcuts][7] to call D-Bus methods directly.
 
 ## Configuration
 
-See an [example configuration][8]. See the defaults in [`settings.py`][9].
+See an [example configuration]. See the defaults in [`settings.py`].
 Defaults can be selectively overridden in
 `${XDG_CONFIG_HOME:-${HOME}/.config}/terminalle.yaml`.
+
+[example configuration]: terminalle.yaml
+[`settings.py`]: terminalle/settings.py
 
 ## TMUX MODE
 
@@ -90,7 +88,7 @@ Generally replacing the tmux prefix with a simple `Ctrl` modifier,
 it cuts the number of keystrokes in half
 without requiring you to memorize new shortcuts.
 If you're a tmux power-user, this will *change* things for you.
-Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration][10]).
+Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration]).
 
 The following shortcuts are enabled in tmux mode:
 
@@ -142,17 +140,8 @@ bind -n C-Right  resize-pane -R
 bind -n M-Right  resize-pane -R 5
 ```
 
-This all goes especially well with [vim-tmux-navigator][11],
+This all goes especially well with [Vim Tmux Navigator],
 which provides shortened bindings for switching seemlessly between tmux panes and Vim windows.
 
-[1]: https://freedesktop.org
-[2]: https://tmux.github.io
-[3]: #tmux-mode
-[4]: https://wiki.gnome.org/Apps/Terminal/VTE
-[5]: https://www.freedesktop.org/wiki/Software/dbus
-[6]: #shortcuts
-[7]: https://docs.kde.org/stable5/en/khotkeys/kcontrol/khotkeys/khotkeys.pdf
-[8]: terminalle.yaml
-[9]: terminalle/settings.py
-[10]: #configuration
-[11]: https://github.com/christoomey/vim-tmux-navigator
+[configuration]: #configuration
+[Vim Tmux Navigator]: https://github.com/christoomey/vim-tmux-navigator
