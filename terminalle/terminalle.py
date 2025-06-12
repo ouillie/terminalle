@@ -115,7 +115,7 @@ class Terminalle:
         window.add_controller(shortcut_controller)
 
     def _term_spawn_async_callback(
-        self, terminal: Vte.Terminal, pid: int, error: Optional[GLib.Error]
+        self, terminal: Vte.Terminal, pid: int, error: Optional[GLib.Error], *args
     ):
         """Finish starting up after the terminal has been spawned."""
         if error is not None:
