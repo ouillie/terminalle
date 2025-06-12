@@ -17,6 +17,9 @@ Based on [VTE].
 
 ## Install
 
+First, install the [dependencies].
+Then:
+
 ```bash
 pip install terminalle
 
@@ -30,20 +33,40 @@ terminalle no-auto
 pip uninstall terminalle
 ```
 
-### Shortcuts
+[dependencies]: #dependencies
+
+### Dependencies
+
+- GTK-4
+- VTE
+- PyGObject
+- PyYAML
+
+These should probably be installed using your package manager:
+
+#### Arch
 
 ```bash
-# Enable keyboard shortcut(s) to toggle the window.
-terminalle key --toggle '<Super>Return' --toggle '<Alt>Return'
+pacman -S python-gobject python-cairo python-yaml gtk4 vte4
+```
 
-# Disable any keyboard shortcuts (also a good idea prior to uninstalling).
-terminalle no-key
+#### Debian / Ubuntu
+
+```bash
+apt install python3-gi python3-gi-cairo python3-yaml gir1.2-gtk-4.0 gir1.2-vte-3.91
+```
+
+#### Fedora
+
+```bash
+dnf install python3-gobject python3-cairo python3-pyyaml gtk4
 ```
 
 ## Usage
 
 Whichever process runs `terminalle` is the "server".
 It's controlled via [D-Bus].
+Set up [keyboard shortcuts] to make your life easy.
 
 ```bash
 # See usage info.
@@ -71,6 +94,26 @@ Wayland does not allow applications to position their own windows.
 Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 
 [D-Bus]: https://www.freedesktop.org/wiki/Software/dbus
+[keyboard shortcuts]: #shortcuts
+
+### Shortcuts
+
+If you use a GNOME-based desktop environment (including Unity or Cinnamon), or KDE,
+Terminalle can manage keyboard shortcuts for you:
+
+```bash
+# Enable keyboard shortcut(s) to toggle the window.
+terminalle key --toggle '<Super>Return' --toggle '<Alt>Return'
+
+# Disable any keyboard shortcuts (also a good idea prior to uninstalling).
+terminalle no-key
+```
+
+For any other kind of dekstop environment,
+you'll have to set up your own shortcuts to invoke the D-Bus methods
+(see example [manual invocations]).
+
+[manual invocations]: #usage
 
 ## Configuration
 
