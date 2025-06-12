@@ -35,7 +35,6 @@ _tmux_mode_commands = [
     ('parenleft', ['tmux', 'switch-client', '-p']),
     ('parenright', ['tmux', 'switch-client', '-n']),
     ('comma', ['tmux', 'command-prompt', '-I', '#W', 'rename-window -- \'%%\'']),
-    ('minus', ['tmux', 'delete-buffer']),
     ('period', ['tmux', 'command-prompt', '-T', 'target', 'move-window -t \'%%\'']),
     ('colon', ['tmux', 'command-prompt']),
     ('semicolon', ['tmux', 'last-pane']),

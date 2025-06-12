@@ -20,13 +20,14 @@ Based on [VTE].
 ```bash
 pip install terminalle
 
-# Optional: Enable auto-start.
+# Recommended: Enable auto-start.
 # Starts the server automatically (window hidden) on login
 # and restarts automatically on toggle if closed.
 terminalle auto
 
-# If enabled, it should be disabled prior to uninstalling.
+# If enabled, auto-start should be disabled prior to uninstalling.
 terminalle no-auto
+pip uninstall terminalle
 ```
 
 ### Shortcuts
@@ -35,7 +36,7 @@ terminalle no-auto
 # Enable keyboard shortcut(s) to toggle the window.
 terminalle key --toggle '<Super>Return' --toggle '<Alt>Return'
 
-# Disable any keyboard shortcuts; should be done prior to uninstalling.
+# Disable any keyboard shortcuts (also a good idea prior to uninstalling).
 terminalle no-key
 ```
 
@@ -94,25 +95,26 @@ Turn it on by setting `tmux: true` in `terminalle.yaml` (see [configuration]).
 
 The following shortcuts are enabled in tmux mode:
 
-| tmux default | tmux mode | Command                                                               |
-| -----------: | --------: | :-------------------------------------------------------------------- |
-| `<Prefix> !` |  `Ctrl+!` | `break-pane`                                                          |
-| `<Prefix> "` |  `Ctrl+"` | `split-window`                                                        |
-| `<Prefix> #` |  `Ctrl+#` | `list-buffers`                                                        |
-| `<Prefix> $` |  `Ctrl+$` | `command-prompt -I "#S" "rename-session -- '%%'"`                     |
-| `<Prefix> %` |  `Ctrl+%` | `split-window -h`                                                     |
-| `<Prefix> &` |  `Ctrl+&` | `confirm-before -p "kill-window #W? (y/n)" kill-window`               |
-| `<Prefix> '` |  `Ctrl+'` | `command-prompt -T window-target -p "index" "select-window -t ':%%'"` |
-| `<Prefix> (` |  `Ctrl+(` | `switch-client -p`                                                    |
-| `<Prefix> )` |  `Ctrl+)` | `switch-client -n`                                                    |
-| `<Prefix> ,` |  `Ctrl+,` | `command-prompt -I "#W" "rename-window -- '%%'"`                      |
-| `<Prefix> :` |  `Ctrl+:` | `command-prompt`                                                      |
-| `<Prefix> ;` |  `Ctrl+;` | `last-pane`                                                           |
-| `<Prefix> =` |  `Ctrl+=` | `choose-buffer -Z`                                                    |
-| `<Prefix> [` |  `Ctrl+[` | `copy-mode`                                                           |
-| `<Prefix> ]` |  `Ctrl+]` | `paste-buffer`                                                        |
-| `<Prefix> {` |  `Ctrl+{` | `swap-pane -U`                                                        |
-| `<Prefix> }` |  `Ctrl+}` | `swap-pane -D`                                                        |
+| tmux default | tmux mode | Command                                                            |
+| -----------: | --------: | :----------------------------------------------------------------- |
+| `<Prefix> !` |  `Ctrl+!` | `break-pane`                                                       |
+| `<Prefix> "` |  `Ctrl+"` | `split-window`                                                     |
+| `<Prefix> #` |  `Ctrl+#` | `list-buffers`                                                     |
+| `<Prefix> $` |  `Ctrl+$` | `command-prompt -I "#S" "rename-session -- '%%'"`                  |
+| `<Prefix> %` |  `Ctrl+%` | `split-window -h`                                                  |
+| `<Prefix> &` |  `Ctrl+&` | `confirm-before -p "kill-window #W? (y/n)" kill-window`            |
+| `<Prefix> '` |  `Ctrl+'` | `command-prompt -T window-target -pindex "select-window -t ':%%'"` |
+| `<Prefix> (` |  `Ctrl+(` | `switch-client -p`                                                 |
+| `<Prefix> )` |  `Ctrl+)` | `switch-client -n`                                                 |
+| `<Prefix> ,` |  `Ctrl+,` | `command-prompt -I "#W" "rename-window -- '%%'"`                   |
+| `<Prefix> .` |  `Ctrl+.` | `command-prompt -T target "move-window -t '%%'"`                   |
+| `<Prefix> :` |  `Ctrl+:` | `command-prompt`                                                   |
+| `<Prefix> ;` |  `Ctrl+;` | `last-pane`                                                        |
+| `<Prefix> =` |  `Ctrl+=` | `choose-buffer -Z`                                                 |
+| `<Prefix> [` |  `Ctrl+[` | `copy-mode`                                                        |
+| `<Prefix> ]` |  `Ctrl+]` | `paste-buffer`                                                     |
+| `<Prefix> {` |  `Ctrl+{` | `swap-pane -U`                                                     |
+| `<Prefix> }` |  `Ctrl+}` | `swap-pane -D`                                                     |
 
 To reap maximum benefits, add the following to your `.tmux.conf`,
 taking care of other common tmux shortcuts that do not get mangled by typical terminal emulators:
