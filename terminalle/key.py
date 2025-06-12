@@ -103,9 +103,11 @@ def keybind_autodetect(toggle: Optional[List[str]], quit: Optional[List[str]]):
 def no_keybind_autodetect():
     autodetect(no_keybind_gsettings, no_keybind_kwriteconfig)
 
+_gnome_based_desktops = {'GNOME', 'ubuntu:GNOME', 'Unity', 'X-Cinnamon'}
+
 def autodetect(gsettings, kwriteconfig):
     environment = getenv('XDG_CURRENT_DESKTOP')
-    if environment == 'GNOME' or environment == 'Unity' or environment == 'X-Cinnamon':
+    if environment in _gnome_based_desktops:
         gsettings()
     elif environment == 'KDE':
         kwriteconfig()
