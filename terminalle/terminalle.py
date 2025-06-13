@@ -59,6 +59,7 @@ class Terminalle:
         """Create and show the main window."""
         window = Gtk.ApplicationWindow(application=app)
         window.set_title('Terminalle')
+        # https://specifications.freedesktop.org/icon-naming-spec/latest/
         window.set_icon_name('utilities-terminal')
         window.set_decorated(False)
         # Make the application window's background transparent using CSS.
