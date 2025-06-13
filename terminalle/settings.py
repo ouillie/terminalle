@@ -12,7 +12,7 @@ _defaults = {
     # (home: string) initial home directory e.g. `${HOME}` or `/tmp`
     'home': getcwd(),
     # (font: string) must be valid input for `Pango.font_description_from_string()`
-    'font': 'Source Code Pro 13',
+    'font': 'monospace 13',
     # (colors: array) must have length either 8, 16, 232, or 256:
     # - first 8 are the main colors
     # - next 8 are the bright colors
