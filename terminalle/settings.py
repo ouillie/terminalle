@@ -8,13 +8,10 @@ from gi.repository import Gdk, Pango
 
 _defaults = {
     # (shell: string) path to shell binary e.g. `${HOME}/bash`
-    # default: `${SHELL:-/bin/sh}`
     'shell': getenv('SHELL', '/bin/sh'),
     # (home: string) initial home directory e.g. `${HOME}` or `/tmp`
-    # default: current working directory of caller
     'home': getcwd(),
     # (font: string) must be valid input for `Pango.font_description_from_string()`
-    # default: 'Source Code Pro 13'
     'font': 'Source Code Pro 13',
     # (colors: array) must have length either 8, 16, 232, or 256:
     # - first 8 are the main colors
@@ -39,13 +36,10 @@ _defaults = {
         '#839496', '#6c71c4', '#93a1a1', '#fdf6e3',
     ],
     # (opacity: number) window opacity beween 0.0 and 1.0 or 0 and 100
-    # default: 0.75
     'opacity': 0.75,
     # (autohide: bool) whether to automatically hide the window when it loses keyboard focus
-    # default: true
     'autohide': True,
     # (tmux: bool) whether to enable recommended hardwired tmux shortcuts
-    # default: false
     'tmux': False,
 }
 _valid_colors_lengths = {8, 16, 232, 256}
