@@ -159,11 +159,10 @@ class Terminalle:
         GLib.idle_add(self._toggle)
 
     def _toggle(self):
-        if self.window.is_active():
-            self.window.hide()
+        if self.window.is_visible():
+            self.window.set_visible(False)
         else:
-            if not self.window.props.visible:
-                self.window.present()
+            self.window.set_visible(True)
             self.window.grab_focus()
 
     def _copy_clipboard(self, widget: Gtk.Widget, args: Optional[GLib.Variant]) -> bool:
