@@ -56,14 +56,12 @@ def build_argparse() -> ArgumentParser:
         description='Set up keyboard shortcut(s) to invoke actions (Toggle or Quit).'
             ' Supports GNOME and KDE.'
             ' The running desktop environment is autodetected by default.',
-        formatter_class=ArgumentDefaultsHelpFormatter,
     )
     no_key_parser = subparsers.add_parser(
         'no-key',
         help='remove keyboard shortcuts',
         description='Remove any keyboard shortcuts'
             ' that were created using the `key` subcommand.',
-        formatter_class=ArgumentDefaultsHelpFormatter,
     )
 
     for sub_parser in [auto_parser, no_auto_parser]:
@@ -104,14 +102,14 @@ def build_argparse() -> ArgumentParser:
         '--toggle',
         action='append',
         metavar='KEYS',
-        help='shortcut to toggle window visibility',
+        help='shortcut to toggle window visibility (can be repeated)',
     )
     key_parser.add_argument(
         '-q',
         '--quit',
         action='append',
         metavar='KEYS',
-        help='shortcut to shut down the application',
+        help='shortcut to shut down the application (can be repeated)',
     )
     for sub_parser in [key_parser, no_key_parser]:
         desktop = sub_parser.add_mutually_exclusive_group()
