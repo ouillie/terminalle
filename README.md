@@ -47,19 +47,19 @@ These should probably be installed using your package manager:
 #### Arch
 
 ```bash
-pacman -S python-gobject python-cairo python-yaml gtk4 vte4
+pacman -S gtk4 vte4 python-gobject python-yaml
 ```
 
 #### Debian / Ubuntu
 
 ```bash
-apt install python3-gi python3-gi-cairo python3-yaml gir1.2-gtk-4.0 gir1.2-vte-3.91
+apt install gir1.2-gtk-4.0 gir1.2-vte-3.91 python3-gi python3-yaml
 ```
 
 #### Fedora
 
 ```bash
-dnf install python3-gobject python3-cairo python3-pyyaml gtk4
+dnf install gtk4 python3-gobject python3-pyyaml
 ```
 
 ## Usage
