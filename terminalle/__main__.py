@@ -6,8 +6,8 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from . import Terminalle, load_settings, __version__
 from .auto import auto, no_auto, xdg_config_home_path
 from .key import (
-    keybind_autodetect, keybind_gsettings, keybind_kwriteconfig,
-    no_keybind_autodetect, no_keybind_gsettings, no_keybind_kwriteconfig,
+    keybind_autodetect, keybind_gnome, keybind_kde,
+    no_keybind_autodetect, no_keybind_gnome, no_keybind_kde,
 )
 
 def build_argparse() -> ArgumentParser:
@@ -54,16 +54,15 @@ def build_argparse() -> ArgumentParser:
         'key',
         help='configure keyboard shortcuts',
         description='Set up keyboard shortcut(s) to invoke actions (Toggle or Quit).'
-            ' Supports GNOME-based desktops (including Unity, Cinnamon, etc.), or KDE.'
+            ' Supports GNOME and KDE.'
             ' The running desktop environment is autodetected by default.',
         formatter_class=ArgumentDefaultsHelpFormatter,
     )
     no_key_parser = subparsers.add_parser(
         'no-key',
         help='remove keyboard shortcuts',
-        description='Remove any keyboard shortcut(s) to invoke actions (Toggle or Quit).'
-            ' Supports GNOME-based desktops (including Unity, Cinnamon, etc.), or KDE.'
-            ' The running desktop environment is autodetected by default.',
+        description='Remove any keyboard shortcuts'
+            ' that were created using the `key` subcommand.',
         formatter_class=ArgumentDefaultsHelpFormatter,
     )
 
@@ -117,12 +116,12 @@ def build_argparse() -> ArgumentParser:
     for sub_parser in [key_parser, no_key_parser]:
         desktop = sub_parser.add_mutually_exclusive_group()
         desktop.add_argument(
-            '--gsettings',
+            '--gnome',
             action='store_true',
-            help='assume the desktop environment is GNOME-based',
+            help='assume the desktop environment is GNOME',
         )
         desktop.add_argument(
-            '--kwriteconfig',
+            '--kde',
             action='store_true',
             help='assume the desktop environment is KDE',
         )
@@ -138,18 +137,18 @@ def main():
     elif args.subcommand == 'no-auto':
         no_auto(args.system, args.force)
     elif args.subcommand == 'key':
-        if args.gsettings:
-            keybind = keybind_gsettings
-        elif args.kwriteconfig:
-            keybind = keybind_kwriteconfig
+        if args.gnome:
+            keybind = keybind_gnome
+        elif args.kde:
+            keybind = keybind_kde
         else:
             keybind = keybind_autodetect
         keybind(args.toggle, args.quit)
     elif args.subcommand == 'no-key':
-        if args.gsettings:
-            no_keybind = no_keybind_gsettings
-        elif args.kwriteconfig:
-            no_keybind = no_keybind_kwriteconfig
+        if args.gnome:
+            no_keybind = no_keybind_gnome
+        elif args.kde:
+            no_keybind = no_keybind_kde
         else:
             no_keybind = no_keybind_autodetect
         no_keybind()

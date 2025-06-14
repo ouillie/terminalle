@@ -39,11 +39,11 @@ Install an XDG desktop file to auto\-start Terminalle (in hidden mode) on login,
 
 Remove the DBUS service file and XDG desktop file that were installed using the \fIauto\fR subcommand.
 .TP
-\fBterminalle\fR \fI\,key\/\fR [-h] [-t KEYS ...] [-q KEYS ...] [--gsettings | --kwriteconfig]
+\fBterminalle\fR \fI\,key\/\fR [-h] [-t KEYS ...] [-q KEYS ...] [--gnome | --kde]
 
 Set up keyboard shortcut(s) to invoke actions (Toggle or Quit). Supports GNOME-based desktops (including Unity, Cinnamon, etc.), or KDE. The running desktop environment is autodetected by default.
 .TP
-\fBterminalle\fR \fI\,no-key\/\fR [-h] [--gsettings | --kwriteconfig]
+\fBterminalle\fR \fI\,no-key\/\fR [-h] [--gnome | --kde]
 
 Remove any keyboard shortcut(s) to invoke actions (Toggle or Quit).
 
@@ -75,10 +75,10 @@ shortcut to toggle window visibility
 \fB\-q\fR, \fB\-\-quit=\fRKEYS
 shortcut to shut down the application
 .TP
-\fB\-\-gsettings\fR
-assume the desktop environment is GNOME-based
+\fB\-\-gnome\fR
+assume the desktop environment is GNOME
 .TP
-\fB\-\-kwriteconfig\fR
+\fB\-\-kde\fR
 assume the desktop environment is KDE
 .TP
 \fB\-h\fR, \fB\-\-help\fR

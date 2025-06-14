@@ -1,7 +1,7 @@
 # Terminalle
 
 A modern, minimalist, semi-transparent, fullscreen "drop-down" terminal emulateur
-for [freedesktop.org]-compatible desktops (e.g. GNOME, Unity, KDE).
+for [freedesktop.org]-compatible desktops (e.g. GNOME, KDE, Cinnamon).
 
 It omits many features common in other terminal emulators, such as tabs,
 because it's meant to be used in conjunction with a terminal multiplexer such as [tmux],
@@ -98,7 +98,7 @@ Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
 
 ### Shortcuts
 
-If you use a GNOME-based desktop environment (including Unity or Cinnamon), or KDE,
+If you use GNOME or KDE,
 Terminalle can manage keyboard shortcuts for you:
 
 ```bash
