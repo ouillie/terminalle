@@ -45,7 +45,7 @@ Set up keyboard shortcut(s) to invoke actions (Toggle or Quit). Supports GNOME-b
 .TP
 \fBterminalle\fR \fI\,no-key\/\fR [-h] [--gnome | --kde]
 
-Remove any keyboard shortcut(s) to invoke actions (Toggle or Quit).
+Remove any keyboard shortcuts that were created using the \fIkey\fR subcommand.
 
 .SH COMMAND OPTIONS 'auto' / 'no-auto'
 .TP
