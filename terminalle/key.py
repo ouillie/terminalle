@@ -23,6 +23,7 @@ _gnome_shortcut_command_template = \
         ' /party/will/Terminalle party.will.Terminalle.{}'
 
 def keybind_gnome(toggle: Optional[List[str]], quit: Optional[List[str]]):
+    """Configure keybindings for GNOME."""
     media_keys = Gio.Settings.new(_gnome_media_keys_key)
     existing_keybindings = media_keys.get_strv('custom-keybindings')
     new_keybindings = existing_keybindings.copy()
@@ -64,6 +65,7 @@ def keybind_gnome(toggle: Optional[List[str]], quit: Optional[List[str]]):
     Gio.Settings.sync()
 
 def no_keybind_gnome():
+    """Remove keybindings for GNOME."""
     media_keys = Gio.Settings.new(_gnome_media_keys_key)
     existing_keybindings = media_keys.get_strv('custom-keybindings')
     new_keybindings = []
@@ -89,23 +91,31 @@ def no_keybind_gnome():
     Gio.Settings.sync()
 
 def keybind_kde(toggle: Optional[List[str]], quit: Optional[List[str]]):
+    """Configure keybindings for KDE."""
     raise NotImplementedError('kwriteconfig is not yet supported')
 
 def no_keybind_kde():
+    """Remove keybindings for KDE."""
     raise NotImplementedError('kwriteconfig is not yet supported')
 
 def keybind_autodetect(toggle: Optional[List[str]], quit: Optional[List[str]]):
+    """Configure keybindings for the current desktop environment."""
     _autodetect(
         partial(keybind_gnome, toggle, quit),
         partial(keybind_kde, toggle, quit),
     )
 
 def no_keybind_autodetect():
+    """Remove keybindings for the current desktop environment."""
     _autodetect(no_keybind_gnome, no_keybind_kde)
 
 def _autodetect(gnome, kde):
+    """
+    Detect whether the current desktop environment is GNOME or KDE
+    and invoke the corresponding function.
+    """
     environment = getenv('XDG_CURRENT_DESKTOP')
-    if environment in {'GNOME', 'ubuntu:GNOME'}:
+    if environment == 'GNOME' or environment == 'ubuntu:GNOME':
         gnome()
     elif environment == 'KDE':
         kde()
@@ -114,6 +124,13 @@ def _autodetect(gnome, kde):
         raise RuntimeError(f'Unknown desktop environment: {reason}')
 
 def _compile_actions(**kwargs) -> Dict[str, str]:
+    """
+    Given keyword arguments mapping action names (i.e. `Toggle` or `Quit`)
+    to lists of keyboard shortcut strings (e.g. `<Super>Return`),
+    return a list of doubles,
+    where the the first element of each double is a single shortcut string,
+    and the second element is the associated action.
+    """
     binding_action_list = [
         (binding, action)
         for action, bindings in kwargs.items()
