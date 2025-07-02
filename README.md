@@ -15,10 +15,48 @@ Based on [VTE].
 [tmux mode]: #tmux-mode
 [VTE]: https://wiki.gnome.org/Apps/Terminal/VTE
 
-## Install
+## Dependencies
 
-First, install the [dependencies].
-Then:
+<details>
+<summary><strong>Arch</strong></summary>
+
+```bash
+pacman -S gtk4 vte4 python-gobject python-yaml
+```
+
+</details>
+
+<details>
+<summary><strong>Debian / Ubuntu</strong></summary>
+
+```bash
+apt install gir1.2-gtk-4.0 gir1.2-vte-3.91 python3-gi python3-yaml
+```
+
+</details>
+
+<details>
+<summary><strong>Fedora</strong></summary>
+
+```bash
+dnf install gtk4 python3-gobject python3-pyyaml
+```
+
+</details>
+
+<details>
+<summary><strong>Other systems</strong></summary>
+
+Install these dependencies:
+
+- [GTK-4](https://www.gtk.org/)
+- [VTE](https://wiki.gnome.org/Apps/Terminal/VTE)
+- [PyGObject](https://pygobject.gnome.org/)
+- [PyYAML](https://pyyaml.org/)
+
+</details>
+
+## Install
 
 ```bash
 pip install terminalle
@@ -27,46 +65,11 @@ pip install terminalle
 # Starts the server automatically (window hidden) on login
 # and restarts automatically on toggle if closed.
 terminalle auto
-
-# If enabled, auto-start should be disabled prior to uninstalling.
-terminalle no-auto
-pip uninstall terminalle
-```
-
-[dependencies]: #dependencies
-
-### Dependencies
-
-- GTK-4
-- VTE
-- PyGObject
-- PyYAML
-
-These should probably be installed using your package manager:
-
-#### Arch
-
-```bash
-pacman -S gtk4 vte4 python-gobject python-yaml
-```
-
-#### Debian / Ubuntu
-
-```bash
-apt install gir1.2-gtk-4.0 gir1.2-vte-3.91 python3-gi python3-yaml
-```
-
-#### Fedora
-
-```bash
-dnf install gtk4 python3-gobject python3-pyyaml
 ```
 
 ## Usage
 
 Whichever process runs `terminalle` is the "server".
-It's controlled via [D-Bus].
-Set up [keyboard shortcuts] to make your life easy.
 
 ```bash
 # See usage info.
@@ -76,9 +79,30 @@ terminalle --help
 # The window is initially hidden by default.
 # This is unnecessary if you've enabled auto-start with `terminalle auto`.
 terminalle &
+```
 
-# Toggle window visibility manually.
-# This should probably be bound to a keyboard shortcut.
+When toggled on, the terminal window opens on the monitor where the mouse is located.
+To move it to a different monitor, move the mouse, then toggle it on again.
+Wayland does not allow applications to position their own windows.
+
+Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
+
+### Shortcuts
+
+If you use GNOME or KDE,
+Terminalle can manage keyboard shortcuts for you:
+
+```bash
+# This example enables 2 keyboard shortcuts to toggle the window,
+# and 1 keyboard shortcut to shut down the server.
+terminalle key --toggle '<Super>Return' --toggle '<Alt>Return' --quit <Super>Backspace'
+```
+
+For any other kind of dekstop environment,
+you'll have to set up your own shortcuts to invoke these [D-Bus] methods:
+
+```bash
+# Toggle window visibility.
 dbus-send --session --type=method_call --dest=party.will.Terminalle \
     /party/will/Terminalle party.will.Terminalle.Toggle
 
@@ -87,33 +111,18 @@ dbus-send --session --type=method_call --dest=party.will.Terminalle \
     /party/will/Terminalle party.will.Terminalle.Quit
 ```
 
-When toggled on, the terminal opens on the monitor where the mouse is located.
-To move it to a different monitor, move the mouse, then toggle it on again.
-Wayland does not allow applications to position their own windows.
-
-Use `Ctrl+Shift+C` and `Ctrl+Shift+V` to access the clipboard.
-
 [D-Bus]: https://www.freedesktop.org/wiki/Software/dbus
-[keyboard shortcuts]: #shortcuts
 
-### Shortcuts
-
-If you use GNOME or KDE,
-Terminalle can manage keyboard shortcuts for you:
+### Uninstall
 
 ```bash
-# Enable keyboard shortcut(s) to toggle the window.
-terminalle key --toggle '<Super>Return' --toggle '<Alt>Return'
-
-# Disable any keyboard shortcuts (also a good idea prior to uninstalling).
+# If enabled, auto-start should be disabled prior to uninstalling.
+# Also disable any keyboard shortcuts.
+terminalle no-auto
 terminalle no-key
+
+pip uninstall terminalle
 ```
-
-For any other kind of dekstop environment,
-you'll have to set up your own shortcuts to invoke the D-Bus methods
-(see example [manual invocations]).
-
-[manual invocations]: #usage
 
 ## Configuration
 
