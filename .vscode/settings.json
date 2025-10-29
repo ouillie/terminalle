@@ -1,0 +1,16 @@
+{
+    "editor.formatOnSave": true,
+    "editor.renderFinalNewline": "off",
+    "files.insertFinalNewline": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "ruff.configuration": {
+        "format": {
+            "quote-style": "single"
+        }
+    }
+}
