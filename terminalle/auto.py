@@ -1,10 +1,9 @@
 """Command-line tools to install and remove autostart-related files."""
 
+from importlib.resources import files
 from os import getenv, makedirs, readlink, symlink, unlink
 from os.path import abspath, join as join_path, sep as path_sep, dirname, isfile, islink
 from sys import stderr
-
-from pkg_resources import resource_filename
 
 from .terminalle import SERVICE_NAME
 
@@ -29,10 +28,10 @@ def _get_dests_and_srcs(system: bool):
     return (
         [join_path(config_dir, 'autostart', desktop_filename)
          for config_dir in xdg_config_dirs],
-        resource_filename(__name__, desktop_filename),
+        str(files(__name__) / desktop_filename),
         [join_path(data_dir, 'dbus-1', 'services', service_filename)
          for data_dir in xdg_data_dirs],
-        resource_filename(__name__, service_filename),
+        str(files(__name__) / service_filename),
     )
 
 def auto(system: bool, force: bool, start_on_login: bool, restart_if_closed: bool):
