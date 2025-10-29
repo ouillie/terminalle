@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from os.path import join as join_path
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
-from . import Terminalle, load_settings, __version__
+from . import Terminalle, __version__, load_settings
 from .auto import auto, no_auto, xdg_config_home_path
 from .key import (
-    keybind_autodetect, keybind_gnome, keybind_kde,
-    no_keybind_autodetect, no_keybind_gnome, no_keybind_kde,
+    keybind_autodetect,
+    keybind_gnome,
+    keybind_kde,
+    no_keybind_autodetect,
+    no_keybind_gnome,
+    no_keybind_kde,
 )
+
 
 def build_argparse() -> ArgumentParser:
     parser = ArgumentParser(
@@ -39,29 +44,29 @@ def build_argparse() -> ArgumentParser:
         'auto',
         help='configure auto-start and/or auto-restart',
         description='Install an XDG desktop file to auto-start Terminalle (in hidden mode) on login,'
-            ' as well as a DBUS service file to auto-restart Terminalle'
-            ' if it\'s not already running when the user attempts to toggle it.',
+        ' as well as a DBUS service file to auto-restart Terminalle'
+        " if it's not already running when the user attempts to toggle it.",
         formatter_class=ArgumentDefaultsHelpFormatter,
     )
     no_auto_parser = subparsers.add_parser(
         'no-auto',
         help='remove auto-(re)start functionality',
         description='Remove the DBUS service file and XDG desktop file'
-            ' that were installed using the `auto` subcommand.',
+        ' that were installed using the `auto` subcommand.',
         formatter_class=ArgumentDefaultsHelpFormatter,
     )
     key_parser = subparsers.add_parser(
         'key',
         help='configure keyboard shortcuts',
         description='Set up keyboard shortcut(s) to invoke actions (Toggle or Quit).'
-            ' Supports GNOME and KDE.'
-            ' The running desktop environment is autodetected by default.',
+        ' Supports GNOME and KDE.'
+        ' The running desktop environment is autodetected by default.',
     )
     no_key_parser = subparsers.add_parser(
         'no-key',
         help='remove keyboard shortcuts',
         description='Remove any keyboard shortcuts'
-            ' that were created using the `key` subcommand.',
+        ' that were created using the `key` subcommand.',
     )
 
     for sub_parser in [auto_parser, no_auto_parser]:
@@ -126,12 +131,18 @@ def build_argparse() -> ArgumentParser:
 
     return parser
 
+
 def main():
     args = build_argparse().parse_args()
     if args.subcommand is None:
         Terminalle(settings=load_settings(args.config), show=args.show).run()
     elif args.subcommand == 'auto':
-        auto(args.system, args.force, not args.no_start_on_login, not args.no_restart_if_closed)
+        auto(
+            args.system,
+            args.force,
+            not args.no_start_on_login,
+            not args.no_restart_if_closed,
+        )
     elif args.subcommand == 'no-auto':
         no_auto(args.system, args.force)
     elif args.subcommand == 'key':
@@ -151,7 +162,8 @@ def main():
             no_keybind = no_keybind_autodetect
         no_keybind()
     else:
-        raise ValueError(f'Unexpected subcommand \'{args.subcommand}\'.')
+        raise ValueError(f"Unexpected subcommand '{args.subcommand}'.")
+
 
 if __name__ == '__main__':
     main()

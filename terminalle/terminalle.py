@@ -1,12 +1,13 @@
 """Terminalle application logic."""
 
 from subprocess import Popen
-from typing import Callable, Dict, Tuple, Optional
+from typing import Callable, Dict, Optional, Tuple
 
 import gi
+
 gi.require_version('Gtk', '4.0')
 gi.require_version('Vte', '3.91')
-from gi.repository import Gtk, GLib, Gio, Vte
+from gi.repository import Gio, GLib, Gtk, Vte
 
 SERVICE_NAME = 'party.will.Terminalle'
 OBJECT_PATH = '/party/will/Terminalle'
@@ -28,14 +29,27 @@ _tmux_mode_commands = [
     ('exclam', ['tmux', 'break-pane']),
     ('quotedbl', ['tmux', 'split-window']),
     ('numbersign', ['tmux', 'list-buffers']),
-    ('dollar', ['tmux', 'command-prompt', '-I', '#S', 'rename-session -- \'%%\'']),
+    ('dollar', ['tmux', 'command-prompt', '-I', '#S', "rename-session -- '%%'"]),
     ('percent', ['tmux', 'split-window', '-h']),
-    ('ampersand', ['tmux', 'confirm-before', '-p', 'kill-window #W? (y/n)', 'kill-window']),
-    ('apostrophe', ['tmux', 'command-prompt', '-T', 'window-target', '-pindex', 'select-window -t \':%%\'']),
+    (
+        'ampersand',
+        ['tmux', 'confirm-before', '-p', 'kill-window #W? (y/n)', 'kill-window'],
+    ),
+    (
+        'apostrophe',
+        [
+            'tmux',
+            'command-prompt',
+            '-T',
+            'window-target',
+            '-pindex',
+            "select-window -t ':%%'",
+        ],
+    ),
     ('parenleft', ['tmux', 'switch-client', '-p']),
     ('parenright', ['tmux', 'switch-client', '-n']),
-    ('comma', ['tmux', 'command-prompt', '-I', '#W', 'rename-window -- \'%%\'']),
-    ('period', ['tmux', 'command-prompt', '-T', 'target', 'move-window -t \'%%\'']),
+    ('comma', ['tmux', 'command-prompt', '-I', '#W', "rename-window -- '%%'"]),
+    ('period', ['tmux', 'command-prompt', '-T', 'target', "move-window -t '%%'"]),
     ('colon', ['tmux', 'command-prompt']),
     ('semicolon', ['tmux', 'last-pane']),
     ('equal', ['tmux', 'choose-buffer', '-Z']),
@@ -44,6 +58,7 @@ _tmux_mode_commands = [
     ('braceleft', ['tmux', 'swap-pane', '-U']),
     ('braceright', ['tmux', 'swap-pane', '-D']),
 ]
+
 
 class Terminalle:
     """Manages the D-Bus service and the terminal window."""
@@ -64,7 +79,9 @@ class Terminalle:
         window.set_decorated(False)
         # Make the application window's background transparent using CSS.
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(b'window { background-color: rgba(0, 0, 0, 0); background-image: none; }')
+        css_provider.load_from_data(
+            b'window { background-color: rgba(0, 0, 0, 0); background-image: none; }'
+        )
         Gtk.StyleContext.add_provider_for_display(
             window.get_display(),
             css_provider,
@@ -92,17 +109,17 @@ class Terminalle:
         self.terminal = terminal
 
         terminal.spawn_async(
-            Vte.PtyFlags.DEFAULT,             # PTY flags
-            self.settings['home'],            # working directory
-            [self.settings['shell']],         # command-line arguments
-            None,                             # environment variables
-            GLib.SpawnFlags.DEFAULT,          # spawn flags
-            None,                             # child setup callback
-            (),                               # child setup callback arguments
-            -1,                               # timeout
-            None,                             # cancellable
+            Vte.PtyFlags.DEFAULT,  # PTY flags
+            self.settings['home'],  # working directory
+            [self.settings['shell']],  # command-line arguments
+            None,  # environment variables
+            GLib.SpawnFlags.DEFAULT,  # spawn flags
+            None,  # child setup callback
+            (),  # child setup callback arguments
+            -1,  # timeout
+            None,  # cancellable
             self._term_spawn_async_callback,  # spawn callback
-            (),                               # spawn callback arguments
+            (),  # spawn callback arguments
         )
 
         # Set up keyboard shortcuts.
@@ -112,7 +129,9 @@ class Terminalle:
         _add_shortcut(shortcut_controller, '<Control><Shift>v', self._paste_clipboard)
         if self.settings['tmux']:
             for key_name, cmd in _tmux_mode_commands:
-                _add_shortcut(shortcut_controller, f'<Control>{key_name}', _run_cmd_handler(cmd))
+                _add_shortcut(
+                    shortcut_controller, f'<Control>{key_name}', _run_cmd_handler(cmd)
+                )
         window.add_controller(shortcut_controller)
 
     def _term_spawn_async_callback(
@@ -170,7 +189,9 @@ class Terminalle:
         self.terminal.copy_clipboard_format(Vte.Format.TEXT)
         return True
 
-    def _paste_clipboard(self, widget: Gtk.Widget, args: Optional[GLib.Variant]) -> bool:
+    def _paste_clipboard(
+        self, widget: Gtk.Widget, args: Optional[GLib.Variant]
+    ) -> bool:
         self.terminal.paste_clipboard()
         return True
 
@@ -186,6 +207,7 @@ class Terminalle:
         """Quit the GTK application."""
         GLib.idle_add(self.app.quit)
 
+
 def _add_shortcut(
     controller: Gtk.ShortcutController,
     trigger: str,
@@ -199,8 +221,10 @@ def _add_shortcut(
         )
     )
 
+
 def _run_cmd_handler(cmd: str) -> Callable[[Gtk.Widget, Optional[GLib.Variant]], bool]:
     def _handler(widget: Gtk.Widget, args: Optional[GLib.Variant]) -> bool:
         Popen(cmd)
         return True
+
     return _handler

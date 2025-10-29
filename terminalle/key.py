@@ -1,26 +1,33 @@
 """Command-line tool to configure keyboard shortcuts for actions."""
 
+import re
 from functools import partial
 from itertools import count
 from os import getenv
 from sys import stderr
 from typing import Dict, List, Optional
-import re
 
 import gi
+
 gi.require_version('Gio', '2.0')
 from gi.repository import Gio
 
 _gnome_media_keys_key = 'org.gnome.settings-daemon.plugins.media-keys'
-_gnome_custom_keybinding_key = 'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding'
-_gnome_custom_keybinding_path_template = \
+_gnome_custom_keybinding_key = (
+    'org.gnome.settings-daemon.plugins.media-keys.custom-keybinding'
+)
+_gnome_custom_keybinding_path_template = (
     '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom{}/'
-_gnome_custom_keybinding_path_regex = \
-    re.compile(r'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom([0-9]+)/')
+)
+_gnome_custom_keybinding_path_regex = re.compile(
+    r'/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom([0-9]+)/'
+)
 _gnome_shortcut_name = 'Toggle Terminalle'
-_gnome_shortcut_command_template = \
-    'dbus-send --session --type=method_call --dest=party.will.Terminalle' \
-        ' /party/will/Terminalle party.will.Terminalle.{}'
+_gnome_shortcut_command_template = (
+    'dbus-send --session --type=method_call --dest=party.will.Terminalle'
+    ' /party/will/Terminalle party.will.Terminalle.{}'
+)
+
 
 def keybind_gnome(toggle: Optional[List[str]], quit: Optional[List[str]]):
     """Configure keybindings for GNOME."""
@@ -44,7 +51,7 @@ def keybind_gnome(toggle: Optional[List[str]], quit: Optional[List[str]]):
                 name = custom.get_string('name')
                 existing_binding = custom.get_string('binding')
                 print(
-                    f'Shortcut already exists for {action}: \'{name}\' ({existing_binding})',
+                    f"Shortcut already exists for {action}: '{name}' ({existing_binding})",
                     file=stderr,
                 )
                 break
@@ -63,6 +70,7 @@ def keybind_gnome(toggle: Optional[List[str]], quit: Optional[List[str]]):
 
     media_keys.set_strv('custom-keybindings', new_keybindings)
     Gio.Settings.sync()
+
 
 def no_keybind_gnome():
     """Remove keybindings for GNOME."""
@@ -90,13 +98,16 @@ def no_keybind_gnome():
     media_keys.set_strv('custom-keybindings', new_keybindings)
     Gio.Settings.sync()
 
+
 def keybind_kde(toggle: Optional[List[str]], quit: Optional[List[str]]):
     """Configure keybindings for KDE."""
     raise NotImplementedError('kwriteconfig is not yet supported')
 
+
 def no_keybind_kde():
     """Remove keybindings for KDE."""
     raise NotImplementedError('kwriteconfig is not yet supported')
+
 
 def keybind_autodetect(toggle: Optional[List[str]], quit: Optional[List[str]]):
     """Configure keybindings for the current desktop environment."""
@@ -105,9 +116,11 @@ def keybind_autodetect(toggle: Optional[List[str]], quit: Optional[List[str]]):
         partial(keybind_kde, toggle, quit),
     )
 
+
 def no_keybind_autodetect():
     """Remove keybindings for the current desktop environment."""
     _autodetect(no_keybind_gnome, no_keybind_kde)
+
 
 def _autodetect(gnome, kde):
     """
@@ -120,8 +133,13 @@ def _autodetect(gnome, kde):
     elif environment == 'KDE':
         kde()
     else:
-        reason = 'XDG_CURRENT_DESKTOP is unset' if environment is None else f'\'{environment}\''
+        reason = (
+            'XDG_CURRENT_DESKTOP is unset'
+            if environment is None
+            else f"'{environment}'"
+        )
         raise RuntimeError(f'Unknown desktop environment: {reason}')
+
 
 def _compile_actions(**kwargs) -> Dict[str, str]:
     """
