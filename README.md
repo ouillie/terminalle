@@ -58,8 +58,17 @@ Install these dependencies:
 
 ## Install
 
+Terminalle is distributed via PyPI.
+Modern systems prefer to manage Python packages
+exclusively via the system package manager,
+requiring the scary-looking `--break-system-packages` flag otherwise.
+
+As long as you install the [dependencies](#dependencies) via your system package manager (see above),
+Terminalle will be the only Python package managed externally,
+and should not cause any conflicts with any system packages.
+
 ```bash
-pip install terminalle
+sudo uv pip install --system terminalle --break-system-packages
 
 # Recommended: Enable auto-start.
 # Starts the server automatically (window hidden) on login
@@ -121,7 +130,7 @@ dbus-send --session --type=method_call --dest=party.will.Terminalle \
 terminalle no-auto
 terminalle no-key
 
-pip uninstall terminalle
+sudo uv pip uninstall --system terminalle --break-system-packages
 ```
 
 ## Configuration
