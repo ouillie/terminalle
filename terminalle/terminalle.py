@@ -64,7 +64,7 @@ class Terminalle:
         window.set_decorated(False)
         # Make the application window's background transparent using CSS.
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(b'* { background-color: transparent; }')
+        css_provider.load_from_data(b'window { background-color: rgba(0, 0, 0, 0); background-image: none; }')
         Gtk.StyleContext.add_provider_for_display(
             window.get_display(),
             css_provider,
